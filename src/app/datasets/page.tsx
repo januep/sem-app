@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Header from '../components/Header'
 
 export default function ChooseDataset() {
   const router = useRouter()
@@ -36,25 +37,7 @@ export default function ChooseDataset() {
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-gray-50 to-gray-100">
-      {/* Header */}
-      <div className="w-full bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto py-4 px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-indigo-600 rounded-md" />
-            <span className="font-bold text-xl text-gray-800">LearnAI</span>
-          </div>
-          <nav className="hidden md:flex gap-8">
-            <a href="#" className="text-gray-600 hover:text-indigo-600 transition">Home</a>
-            <a href="#" className="text-gray-600 hover:text-indigo-600 transition">Datasets</a>
-            <a href="#" className="text-gray-600 hover:text-indigo-600 transition">Modules</a>
-            <a href="#" className="text-gray-600 hover:text-indigo-600 transition">About</a>
-          </nav>
-          <button className="px-4 py-2 bg-gray-100 rounded-full text-gray-700 hover:bg-gray-200 transition">
-            <span className="hidden md:inline">Account</span>
-            <span className="md:hidden">👤</span>
-          </button>
-        </div>
-      </div>
+      <Header />
 
       {/* Main content */}
       <div className="max-w-4xl w-full mx-auto px-6 py-16">

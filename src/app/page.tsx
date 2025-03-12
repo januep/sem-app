@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 export default function Home() {
@@ -16,6 +17,12 @@ export default function Home() {
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const router = useRouter()
+
+  const handleGetStarted = () => {
+    router.push('/datasets')
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center">
@@ -58,8 +65,9 @@ export default function Home() {
             Automatyzacja tworzenia interaktywnych kursów
           </p>
           <button 
+          onClick={handleGetStarted}
             className="px-8 py-4 bg-white text-purple-700 rounded-full text-lg font-bold shadow-lg hover:shadow-xl transform transition hover:-translate-y-1 hover:bg-yellow-300"
-            style={{ transform: `translateY(${-scrollY * 0.1}px)` }}
+            style={{ transform: `translateY(${-scrollY * 0.1}px)`, cursor:'pointer' }}
           >
             Rozpocznij
           </button>
