@@ -1,232 +1,109 @@
-'use client'
+import Link from 'next/link';
+import Header from '@/app/components/Header';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Header from '../components/Header'
+const modules = [
+  { 
+    id: 'office-safety', 
+    title: 'Office Health & Safety Quiz',
+    description: 'Learn essential workplace safety procedures and best practices.',
+    questions: 2,
+    estimatedTime: '5 minutes',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+    )
+  },
+  { 
+    id: 'fire-safety', 
+    title: 'Fire Safety Training',
+    description: 'Understand fire prevention, evacuation procedures, and emergency response.',
+    questions: 0,
+    estimatedTime: 'Coming soon',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+      </svg>
+    )
+  },
+  { 
+    id: 'ergonomics', 
+    title: 'Ergonomics at Work',
+    description: 'Learn how to set up your workspace to prevent strain and injury.',
+    questions: 0,
+    estimatedTime: 'Coming soon',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+    )
+  },
+];
 
-// This would typically come from your API or database
-const quizData = {
-  id: 'office-safety-quiz',
-  title: 'Office Health & Safety Quiz',
-  description: 'Test your knowledge of common workplace safety procedures and best practices.',
-  questions: [
-    {
-      id: 'q1',
-      text: 'What should you do if you notice a frayed electrical cord in the office?',
-      options: [
-        'Tape it up with electrical tape',
-        'Unplug it and report it to facilities management',
-        'Continue using it but be careful',
-        'Cover it with a carpet or rug'
-      ],
-      correctAnswer: 1
-    },
-    {
-      id: 'q2',
-      text: 'How often should you take breaks from prolonged computer work to prevent eye strain?',
-      options: [
-        'Every 4 hours',
-        'Once a day',
-        'Every 20-30 minutes',
-        'Only when your eyes feel tired'
-      ],
-      correctAnswer: 2
-    },
-    {
-      id: 'q3',
-      text: 'What is the proper posture for sitting at a desk?',
-      options: [
-        'Leaning forward with your back straight',
-        'Leaning back with your feet up on the desk',
-        'Sitting with your back against the chair, feet flat on the floor, and eyes level with the top of the monitor',
-        'Sitting cross-legged on your chair'
-      ],
-      correctAnswer: 2
-    },
-    {
-      id: 'q4',
-      text: 'In case of a fire emergency, you should:',
-      options: [
-        'Gather your personal belongings before evacuating',
-        'Use the elevator to exit the building quickly',
-        'Follow the evacuation plan and use designated exit routes',
-        'Hide under your desk until help arrives'
-      ],
-      correctAnswer: 2
-    },
-    {
-      id: 'q5',
-      text: 'Which of the following is NOT a recommended practice for preventing musculoskeletal disorders?',
-      options: [
-        'Maintaining the same position for long periods to build endurance',
-        'Using adjustable chairs and desks',
-        'Taking regular breaks to stretch',
-        'Using ergonomic keyboards and mice'
-      ],
-      correctAnswer: 0
-    }
-  ]
-}
-
-export default function QuizModule({ }: { params: { moduleId: string } }) {
-  const router = useRouter()
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [selectedAnswers, setSelectedAnswers] = useState<number[]>(Array(quizData.questions.length).fill(-1))
-  const [showResults, setShowResults] = useState(false)
-  const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false)
-
-  const handleAnswerSelect = (answerIndex: number) => {
-    if (!isAnswerSubmitted) {
-      const newAnswers = [...selectedAnswers]
-      newAnswers[currentQuestion] = answerIndex
-      setSelectedAnswers(newAnswers)
-    }
-  }
-
-  const handleSubmitAnswer = () => {
-    setIsAnswerSubmitted(true)
-  }
-
-  const handleNextQuestion = () => {
-    if (currentQuestion < quizData.questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
-      setIsAnswerSubmitted(false)
-    } else {
-      setShowResults(true)
-    }
-  }
-
-  const handleRetakeQuiz = () => {
-    setCurrentQuestion(0)
-    setSelectedAnswers(Array(quizData.questions.length).fill(-1))
-    setShowResults(false)
-    setIsAnswerSubmitted(false)
-  }
-
-  const handleBackToModules = () => {
-    router.push('/modules')
-  }
-
-  const calculateScore = () => {
-    return selectedAnswers.reduce((score, answer, index) => {
-      return answer === quizData.questions[index].correctAnswer ? score + 1 : score
-    }, 0)
-  }
-
-  const score = calculateScore()
-  const scorePercentage = Math.round((score / quizData.questions.length) * 100)
-
+export default function ModulesPage() {
   return (
     <>
       <Header />
-      <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-gray-50 to-gray-100">
-        <div className="max-w-4xl w-full mx-auto px-6 py-16">
-          {!showResults ? (
-            <>
-              <div className="mb-8">
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">{quizData.title}</h1>
-                <p className="text-lg text-gray-600 mb-4">{quizData.description}</p>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div 
-                    className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" 
-                    style={{ width: `${((currentQuestion + 1) / quizData.questions.length) * 100}%` }}
-                  ></div>
-                </div>
-                <p className="text-sm text-gray-500 mt-2">Question {currentQuestion + 1} of {quizData.questions.length}</p>
-              </div>
+      <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-800 mb-3">Training Modules</h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Select a training module to enhance your workplace knowledge and safety skills
+            </p>
+          </div>
 
-              <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-                <div className="p-6">
-                  <h2 className="text-xl font-bold text-gray-800 mb-6">
-                    {quizData.questions[currentQuestion].text}
-                  </h2>
-
-                  <div className="space-y-3">
-                    {quizData.questions[currentQuestion].options.map((option, index) => (
-                      <div 
-                        key={index}
-                        onClick={() => handleAnswerSelect(index)}
-                        className={`
-                          p-4 border rounded-lg cursor-pointer transition-all
-                          ${selectedAnswers[currentQuestion] === index ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:bg-gray-50'}
-                          ${isAnswerSubmitted && index === quizData.questions[currentQuestion].correctAnswer ? 'border-green-600 bg-green-50' : ''}
-                          ${isAnswerSubmitted && selectedAnswers[currentQuestion] === index && index !== quizData.questions[currentQuestion].correctAnswer ? 'border-red-600 bg-red-50' : ''}
-                        `}
-                      >
-                        <div className="flex items-center">
-                          <div className={`
-                            w-6 h-6 rounded-full flex items-center justify-center mr-3
-                            ${selectedAnswers[currentQuestion] === index ? 'bg-indigo-600 text-white' : 'bg-gray-200'}
-                            ${isAnswerSubmitted && index === quizData.questions[currentQuestion].correctAnswer ? 'bg-green-600 text-white' : ''}
-                            ${isAnswerSubmitted && selectedAnswers[currentQuestion] === index && index !== quizData.questions[currentQuestion].correctAnswer ? 'bg-red-600 text-white' : ''}
-                          `}>
-                            {String.fromCharCode(65 + index)}
-                          </div>
-                          <span className="text-gray-800">{option}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {isAnswerSubmitted && (
-                    <div className={`mt-6 p-4 rounded-lg ${selectedAnswers[currentQuestion] === quizData.questions[currentQuestion].correctAnswer ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-                      <h3 className={`font-semibold ${selectedAnswers[currentQuestion] === quizData.questions[currentQuestion].correctAnswer ? 'text-green-700' : 'text-red-700'}`}>
-                        {selectedAnswers[currentQuestion] === quizData.questions[currentQuestion].correctAnswer ? 'Correct!' : 'Incorrect!'}
-                      </h3>
-                      <p className="mt-1 text-gray-700">
-                        The correct answer is: {quizData.questions[currentQuestion].options[quizData.questions[currentQuestion].correctAnswer]}
-                      </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {modules.map((module) => {
+              const isAvailable = module.questions > 0;
+              
+              return (
+                <div 
+                  key={module.id}
+                  className={`bg-white rounded-2xl shadow-lg overflow-hidden transition duration-300 ${
+                    isAvailable ? 'hover:shadow-xl transform hover:-translate-y-1' : 'opacity-75'
+                  }`}
+                >
+                  <div className="p-6">
+                    <div className="w-14 h-14 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+                      {module.icon}
                     </div>
-                  )}
+                    <h2 className="text-xl font-bold text-gray-800 mb-2">{module.title}</h2>
+                    <p className="text-gray-600 mb-4">{module.description}</p>
+                    
+                    <div className="flex justify-between items-center text-sm text-gray-500 mb-5">
+                      <div className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Questions: {module.questions}
+                      </div>
+                      <div className="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {module.estimatedTime}
+                      </div>
+                    </div>
+                    
+                    {isAvailable ? (
+                      <Link 
+                        href={`/modules/${module.id}`} 
+                        className="block w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-center rounded-xl transition duration-300"
+                      >
+                        Start Module
+                      </Link>
+                    ) : (
+                      <div className="block w-full py-3 px-4 bg-gray-300 text-gray-600 font-medium text-center rounded-xl cursor-not-allowed">
+                        Coming Soon
+                      </div>
+                    )}
+                  </div>
                 </div>
-
-                <div className="bg-gray-50 p-4 flex justify-between">
-                  {!isAnswerSubmitted ? (
-                    <button
-                      onClick={handleSubmitAnswer}
-                      disabled={selectedAnswers[currentQuestion] === -1}
-                      className={`px-6 py-2 rounded-full font-medium transition-colors ${
-                        selectedAnswers[currentQuestion] !== -1
-                          ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      }`}
-                    >
-                      Check Answer                    </button>
-                  ) : (
-                    <button
-                      onClick={handleNextQuestion}
-                      className="px-6 py-2 rounded-full font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
-                    >
-                      {currentQuestion < quizData.questions.length - 1 ? "Next Question" : "See Results"}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="bg-white rounded-2xl shadow-md p-8 text-center">
-              <h2 className="text-3xl font-bold text-gray-800">Quiz Results</h2>
-              <p className="text-lg text-gray-600 mt-4">You scored {score} out of {quizData.questions.length}.</p>
-              <p className="text-lg font-semibold mt-2">
-                Score: <span className={`${scorePercentage >= 70 ? 'text-green-600' : 'text-red-600'}`}>{scorePercentage}%</span>
-              </p>
-
-              <div className="flex justify-center mt-6 space-x-4">
-                <button
-                  onClick={handleRetakeQuiz}
-                  className="px-6 py-2 rounded-full font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-                >
-                  Retake Quiz
-                </button>
-                <button
-                  onClick={handleBackToModules}
-                  className="px-6 py-2 rounded-full font-medium bg-gray-400 text-white hover:bg-gray-500 transition-colors"
-                >
-                  Back to Modules
-                </button>
-              </div>
-            </div>
-          )}
+              );
+            })}
+          </div>
         </div>
       </main>
     </>
