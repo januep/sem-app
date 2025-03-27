@@ -379,7 +379,7 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
         </AnimatePresence>
         
         <div className="mt-8 text-center text-sm text-gray-500">
-          <p>© {new Date().getFullYear()} Learning Platform. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Jan Mańczak. All rights reserved.</p>
         </div>
       </motion.div>
     </div>
