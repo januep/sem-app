@@ -29,7 +29,7 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
     const fetchQuiz = async () => {
       try {
         setLoading(true);
-        const res = await fetch('/exampleQuiz.json');
+        const res = await fetch('/quizes/szkolenieBHP.json');
         if (!res.ok) {
           throw new Error('Failed to fetch quiz data');
         }

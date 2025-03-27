@@ -1,5 +1,8 @@
 {
     "quizTitle": "Przykładowy Quiz",
+    "description": "to jest testowo",
+    "heroIconName": "academic-cap",
+    "approximateTime": 5,
     "questions": [
       {
         "id": 1,
