@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Header from '@/app/components/Header';
 
 const modules = [
   { 
@@ -44,7 +43,6 @@ const modules = [
 export default function ModulesPage() {
   return (
     <>
-      <Header />
       <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -89,7 +87,7 @@ export default function ModulesPage() {
                     
                     {isAvailable ? (
                       <Link 
-                        href={`/modules/${module.id}`} 
+                        href={`/courses/${module.id}`} 
                         className="block w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-center rounded-xl transition duration-300"
                       >
                         Start Module

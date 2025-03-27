@@ -24,3 +24,72 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.5s ease-out forwards;
+}
+
+/* Butterfly SVG with gradient fill */
+.svg-logo-container {
+  display: inline-block;
+  filter: drop-shadow(0 0 3px rgba(79, 70, 229, 0.3));
+  transition: all 0.3s ease;
+}
+
+.svg-logo-container:hover {
+  filter: drop-shadow(0 0 5px rgba(124, 58, 237, 0.5));
+}
+
+/* Gradient colors for the SVG */
+.gradient-stop-1 {
+  stop-color: #4F46E5; /* indigo-600 */
+  stop-opacity: 1;
+}
+
+.gradient-stop-2 {
+  stop-color: #7C3AED; /* purple-600 */
+  stop-opacity: 1;
+}
+
+/* Animated gradient on hover */
+.svg-logo-container:hover .gradient-stop-1 {
+  animation: colorShift1 3s ease infinite alternate;
+}
+
+.svg-logo-container:hover .gradient-stop-2 {
+  animation: colorShift2 3s ease infinite alternate;
+}
+
+@keyframes colorShift1 {
+  0% {
+    stop-color: #4F46E5; /* indigo-600 */
+  }
+  100% {
+    stop-color: #6366F1; /* indigo-500 */
+  }
+}
+
+@keyframes colorShift2 {
+  0% {
+    stop-color: #7C3AED; /* purple-600 */
+  }
+  100% {
+    stop-color: #A855F7; /* purple-500 */
+  }
+}
+
+/* Fix for black background issue */
+html,
+body,
+#__next {
+  background-color: #f9fafb; /* This is gray-50 in Tailwind */
+  min-height: 100%;
+}

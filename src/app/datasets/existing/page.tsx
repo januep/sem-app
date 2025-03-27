@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Header from '@/app/components/Header'
 
 export default function ExistingDatasets() {
   const router = useRouter()
@@ -20,7 +19,6 @@ export default function ExistingDatasets() {
 
   return (
     <>
-      <Header />
       <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-gray-50 to-gray-100">
         <div className="max-w-4xl w-full mx-auto px-6 py-16">
           <div className="mb-8">

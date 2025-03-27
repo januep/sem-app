@@ -1,0 +1,45 @@
+{
+    "quizTitle": "Przykładowy Quiz",
+    "questions": [
+      {
+        "id": 1,
+        "type": "MAMCQ",
+        "prompt": "Wybierz wszystkie odpowiedzi, które są poprawne: Które z poniższych to języki programowania?",
+        "options": ["Python", "HTML", "Java", "CSS"],
+        "correctAnswers": ["Python", "Java"]
+      },
+      {
+        "id": 2,
+        "type": "FillBlanks",
+        "prompt": "Nazwa stolicy Francji to ____.",
+        "blanks": 1,
+        "answers": ["Paryż"]
+      },
+      {
+        "id": 3,
+        "type": "TrueFalse",
+        "prompt": "Słońce jest planetą.",
+        "correctAnswer": false
+      },
+      {
+        "id": 4,
+        "type": "SAMCQ",
+        "prompt": "Która z poniższych liczb jest parzysta?",
+        "options": ["3", "5", "8", "11"],
+        "correctAnswer": "8"
+      },
+      {
+        "id": 5,
+        "type": "Matching",
+        "prompt": "Dopasuj pojęcia do definicji.",
+        "pairs": [
+          { "term": "HTML", "definition": "Język znaczników do tworzenia stron internetowych" },
+          { "term": "CSS", "definition": "Język służący do stylizacji stron internetowych" },
+          { "term": "JavaScript", "definition": "Język programowania do interakcji na stronach internetowych" },
+          { "term": "React", "definition": "Biblioteka do budowy interfejsów użytkownika" },
+          { "term": "Next.js", "definition": "Framework oparty na React do budowania aplikacji webowych" }
+        ]
+      }
+    ]
+  }
+  
