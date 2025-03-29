@@ -1,0 +1,68 @@
+{
+  "quizTitle": "Matura z geografii - Quiz",
+  "description": "Test wiedzy z geografii na poziomie matury, zawierający pytania wielokrotnego wyboru.",
+  "approximateTime": 15,
+  "heroIconName": "AcademicCapIcon",
+  "questions": [
+    {
+      "id": 1,
+      "type": "SAMCQ",
+      "prompt": "Które z poniższych miast jest stolicą Francji?",
+      "options": [
+        "Marsylia",
+        "Paryż",
+        "Lyon",
+        "Nicea"
+      ],
+      "correctAnswer": "Paryż"
+    },
+    {
+      "id": 2,
+      "type": "SAMCQ",
+      "prompt": "Jaki jest największy kontynent na Ziemi?",
+      "options": [
+        "Europa",
+        "Antarktyda",
+        "Azja",
+        "Ameryka Północna"
+      ],
+      "correctAnswer": "Azja"
+    },
+    {
+      "id": 3,
+      "type": "SAMCQ",
+      "prompt": "Rzeka Ganges znajduje się na terenie którego kraju?",
+      "options": [
+        "Indie",
+        "Nepal",
+        "Bhutan",
+        "Mjanma"
+      ],
+      "correctAnswer": "Indie"
+    },
+    {
+      "id": 4,
+      "type": "SAMCQ",
+      "prompt": "Która z tych formacji geograficznych jest przykładem góry stołowej?",
+      "options": [
+        "Kilimandżaro",
+        "Mont Blanc",
+        "Tatry",
+        "Roraima"
+      ],
+      "correctAnswer": "Roraima"
+    },
+    {
+      "id": 5,
+      "type": "SAMCQ",
+      "prompt": "Które jezioro jest największe na świecie?",
+      "options": [
+        "Jezioro Wiktorii",
+        "Jezioro Górne",
+        "Jezioro Bajkał",
+        "Jezioro Kaspijskie"
+      ],
+      "correctAnswer": "Jezioro Kaspijskie"
+    }
+  ]
+}

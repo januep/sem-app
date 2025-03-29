@@ -29,12 +29,24 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
     const fetchQuiz = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/quizes/${params.courseId}.json`); 
+        const res = await fetch(`/api/quizzes/${params.courseId}`);
         if (!res.ok) {
           throw new Error('Failed to fetch quiz data');
         }
-        const data: Quiz = await res.json();
-        setQuiz(data);
+        const data = await res.json();
+        
+        // 🧠 Jeśli pytania są w JSONB, musisz je sparsować:
+        const parsedQuiz: Quiz = {
+          quizTitle: data.quiz_title,
+          description: data.description,
+          approximateTime: data.approximate_time,
+          heroIconName: data.hero_icon_name,
+          questions: typeof data.questions === 'string' 
+            ? JSON.parse(data.questions) 
+            : data.questions
+        };
+    
+        setQuiz(parsedQuiz);
       } catch (err) {
         console.error(err);
         setError('Failed to load quiz. Please try again later.');
@@ -42,9 +54,10 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
         setLoading(false);
       }
     };
+    
 
     fetchQuiz();
-  }, []);
+  }, [params.courseId]);
 
   const handleNext = (answer: AnswerType) => {
     setAnswers((prev) => {
@@ -367,10 +380,10 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
                     Retry Quiz
                   </button>
                   <button 
-                    onClick={() => window.location.href = `/courses/${params.courseId}`}
+                    onClick={() => window.location.href = `/courses`}
                     className="px-6 py-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg shadow-sm transition-colors"
                   >
-                    Back to Course
+                    Back to Courses
                   </button>
                 </div>
               </div>
