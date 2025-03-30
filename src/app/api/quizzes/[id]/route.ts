@@ -8,10 +8,11 @@ const supabase = createClient(
 
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = context.params.id;
-
+  // Await the promise to get the actual parameters
+  const { id } = await params;
+  
   const { data, error } = await supabase
     .from('quizzes')
     .select('*')

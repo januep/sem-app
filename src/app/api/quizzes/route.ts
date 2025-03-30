@@ -8,6 +8,8 @@ const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!; // używa
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 export async function GET(request: Request) {
+  //todo
+  console.log(request)
   const { data, error } = await supabase.from('quizzes').select('*');
 
   if (error) {

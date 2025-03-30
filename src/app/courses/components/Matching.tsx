@@ -34,7 +34,6 @@ const SortableDefinition = ({
   definition,
   id,
   isMatched,
-  isDragging,
 }: {
   definition: string;
   id: string;

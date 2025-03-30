@@ -39,15 +39,20 @@ export default function CreateCoursePage() {
         throw new Error(errorData.error || 'Failed to process text file');
       }
 
-      // 3) Parse the JSON response (with completion from GPT-3.5)
+      // 3) Parse the JSON response (with completion from GPT‑3.5)
       const data = await response.json();
       console.log('GPT‑3.5 Completion:', data.completion);
 
       setCompletion(data.completion);
       setProcessingStatus('Success! GPT‑3.5 completion received.');
-    } catch (error: any) {
-      console.error('Error:', error.message || error);
-      setProcessingStatus(`Error: ${error.message || 'Unknown error'}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error:', error.message);
+        setProcessingStatus(`Error: ${error.message}`);
+      } else {
+        console.error('Error:', error);
+        setProcessingStatus('Error: Unknown error');
+      }
     } finally {
       setIsProcessing(false);
     }

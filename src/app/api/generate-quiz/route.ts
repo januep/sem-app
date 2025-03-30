@@ -114,7 +114,6 @@ export async function POST(request: Request) {
       DO NOT include any explanations, comments, or markdown formatting in your response.
     `;
 
-
     const response = await openai.chat.completions.create({
       model: 'gpt-4-turbo',
       messages: [
@@ -130,8 +129,9 @@ export async function POST(request: Request) {
 
     try {
       quizData = JSON.parse(content);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to parse OpenAI response as JSON:', content);
+      console.error(_error)
       return NextResponse.json(
         { error: 'Failed to generate valid quiz data. Please try again.' },
         { status: 500 }

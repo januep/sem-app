@@ -1,26 +1,30 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Quiz, QuizQuestion, MAMCQQuestion, SAMCQQuestion, FillBlanksQuestion, TrueFalseQuestion, MatchingQuestion } from '../../../app/types/quiz';
+import {
+  Quiz,
+  QuizQuestion,
+  MAMCQQuestion,
+  SAMCQQuestion,
+  FillBlanksQuestion,
+  TrueFalseQuestion,
+  MatchingQuestion
+} from '../../../app/types/quiz';
 import MAMCQ from '../../../app/courses/components/MAMCQ';
 import FillBlanks from '../../../app/courses/components/FillBlanks';
 import TrueFalse from '../../../app/courses/components/TrueFalse';
 import SAMCQ from '../../../app/courses/components/SAMCQ';
 import Matching from '../../../app/courses/components/Matching';
 
-interface PageProps {
-  params: {
-    courseId: string;
-  };
-}
+const CoursePage: React.FC = () => {
+  // Retrieve the route parameter using useParams hook
+  const { courseId } = useParams();
 
-type AnswerType = string[] | string | boolean | Record<number, string>;
-
-const CoursePage: React.FC<PageProps> = ({ params }) => {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<AnswerType[]>([]);
+  const [answers, setAnswers] = useState<(string[] | string | boolean | Record<number, string>)[]>([]);
   const [isFinished, setIsFinished] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,23 +33,24 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
     const fetchQuiz = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/quizzes/${params.courseId}`);
+        const res = await fetch(`/api/quizzes/${courseId}`);
         if (!res.ok) {
           throw new Error('Failed to fetch quiz data');
         }
         const data = await res.json();
-        
-        // 🧠 Jeśli pytania są w JSONB, musisz je sparsować:
+
+        // If questions are stored as JSONB, parse them:
         const parsedQuiz: Quiz = {
           quizTitle: data.quiz_title,
           description: data.description,
           approximateTime: data.approximate_time,
           heroIconName: data.hero_icon_name,
-          questions: typeof data.questions === 'string' 
-            ? JSON.parse(data.questions) 
-            : data.questions
+          questions:
+            typeof data.questions === 'string'
+              ? JSON.parse(data.questions)
+              : data.questions
         };
-    
+
         setQuiz(parsedQuiz);
       } catch (err) {
         console.error(err);
@@ -54,12 +59,13 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
         setLoading(false);
       }
     };
-    
 
-    fetchQuiz();
-  }, [params.courseId]);
+    if (courseId) {
+      fetchQuiz();
+    }
+  }, [courseId]);
 
-  const handleNext = (answer: AnswerType) => {
+  const handleNext = (answer: string[] | string | boolean | Record<number, string>) => {
     setAnswers((prev) => {
       const newAnswers = [...prev];
       newAnswers[currentIndex] = answer;
@@ -75,9 +81,8 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
 
   const calculateScore = (): number => {
     if (!quiz) return 0;
-    
-    let score = 0;
 
+    let score = 0;
     quiz.questions.forEach((question, index) => {
       const answer = answers[index];
 
@@ -118,7 +123,6 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
         case 'Matching': {
           const matchingQuestion = question as MatchingQuestion;
           let allCorrect = true;
-          
           if (typeof answer === 'object' && !Array.isArray(answer) && answer !== null) {
             matchingQuestion.pairs.forEach((pair, idx) => {
               if (answer[idx] !== pair.definition) {
@@ -128,7 +132,6 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
           } else {
             allCorrect = false;
           }
-          
           if (allCorrect) {
             score += 1;
           }
@@ -140,13 +143,12 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
     return score;
   };
 
-  const renderFeedback = (score: number, total: number): {
-    message: string;
-    emoji: string;
-    color: string;
-  } => {
+  const renderFeedback = (
+    score: number,
+    total: number
+  ): { message: string; emoji: string; color: string } => {
     const percentage = (score / total) * 100;
-    
+
     if (percentage === 100) {
       return {
         message: "Perfect! You've mastered this material!",
@@ -206,13 +208,13 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
       </div>
     );
   }
-  
+
   // Error state
   if (error || !quiz) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6">
         <div className="bg-red-100 p-6 rounded-lg max-w-md">
-          <svg className="w-16 h-16 text-red-500 mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-16 h-16 text-red-500 mb-4 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
           <h3 className="text-xl font-bold text-gray-800 mb-2">Quiz Not Available</h3>
@@ -228,15 +230,13 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
     );
   }
 
-  // Calculate the values once
+  // Calculate quiz score and feedback
   const totalScore = calculateScore();
   const totalQuestions = quiz.questions.length;
   const scorePercentage = (totalScore / totalQuestions) * 100;
   const feedback = renderFeedback(totalScore, totalQuestions);
-  
-  // Get current question if we're not finished
   const currentQuestion = !isFinished ? quiz.questions[currentIndex] : null;
-  
+
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <motion.div 
@@ -246,9 +246,8 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
       >
         <div className="mb-8 text-center">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">{quiz.quizTitle}</h1>
-          {/* If you have a description in your Quiz type, you can add it here */}
         </div>
-        
+
         <AnimatePresence mode="wait">
           {!isFinished && currentQuestion ? (
             <motion.div 
@@ -265,34 +264,38 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
                   <span className="text-sm font-medium text-gray-500">
                     Question {currentIndex + 1} of {quiz.questions.length}
                   </span>
-                  
                   <span className="text-sm font-medium text-blue-600">
-                    {Math.round((currentIndex + 1) / quiz.questions.length * 100)}% Complete
+                    {Math.round(((currentIndex + 1) / quiz.questions.length) * 100)}% Complete
                   </span>
                 </div>
-                
                 <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
                   <motion.div
-                    initial={{ width: `${((currentIndex) / quiz.questions.length) * 100}%` }}
+                    initial={{ width: `${(currentIndex / quiz.questions.length) * 100}%` }}
                     animate={{ width: `${((currentIndex + 1) / quiz.questions.length) * 100}%` }}
                     transition={{ duration: 0.5 }}
                     className="bg-gradient-to-r from-blue-400 to-blue-600 h-full rounded-full"
                   ></motion.div>
                 </div>
               </div>
-              
+
               {/* Question Type Label */}
               <div className="mb-4">
                 <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium uppercase tracking-wide">
-                  {currentQuestion.type === 'MAMCQ' ? 'Multiple Answers' :
-                   currentQuestion.type === 'SAMCQ' ? 'Single Answer' :
-                   currentQuestion.type === 'TrueFalse' ? 'True or False' :
-                   currentQuestion.type === 'FillBlanks' ? 'Fill in the Blanks' :
-                   currentQuestion.type === 'Matching' ? 'Matching' : 'Quiz Question'}
+                  {currentQuestion.type === 'MAMCQ'
+                    ? 'Multiple Answers'
+                    : currentQuestion.type === 'SAMCQ'
+                    ? 'Single Answer'
+                    : currentQuestion.type === 'TrueFalse'
+                    ? 'True or False'
+                    : currentQuestion.type === 'FillBlanks'
+                    ? 'Fill in the Blanks'
+                    : currentQuestion.type === 'Matching'
+                    ? 'Matching'
+                    : 'Quiz Question'}
                 </span>
               </div>
-              
-              {/* Current Question */}
+
+              {/* Render current question */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={`question-${currentIndex}`}
@@ -316,7 +319,6 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
               <div className="py-8 px-8 md:px-10 text-center">
                 <span className="text-5xl mb-4 block">{feedback.emoji}</span>
                 <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-800">Quiz Complete!</h2>
-                
                 <div className="my-8 flex justify-center">
                   <div className="relative w-40 h-40">
                     {/* Circular progress bar */}
@@ -334,26 +336,26 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
                         className="text-blue-600" 
                         strokeWidth="10" 
                         strokeDasharray={251.2}
-                        strokeDashoffset={251.2 - (scorePercentage / 100 * 251.2)} 
-                        strokeLinecap="round" 
-                        stroke="currentColor" 
-                        fill="transparent" 
-                        r="40" 
-                        cx="50" 
-                        cy="50" 
+                        strokeDashoffset={251.2 - (scorePercentage / 100 * 251.2)}
+                        strokeLinecap="round"
+                        stroke="currentColor"
+                        fill="transparent"
+                        r="40"
+                        cx="50"
+                        cy="50"
                       />
                     </svg>
                     <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full">
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-gray-800">{totalScore}/{totalQuestions}</div>
+                        <div className="text-3xl font-bold text-gray-800">
+                          {totalScore}/{totalQuestions}
+                        </div>
                         <div className="text-sm text-gray-500">Score</div>
                       </div>
                     </div>
                   </div>
                 </div>
-                
                 <p className={`text-xl ${feedback.color} font-medium mb-6`}>{feedback.message}</p>
-                
                 <div className="bg-gray-50 p-5 rounded-xl mb-6">
                   <h3 className="font-medium text-gray-700 mb-3">Performance Summary</h3>
                   <div className="grid grid-cols-2 gap-4">
@@ -367,7 +369,6 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
                     </div>
                   </div>
                 </div>
-                
                 <div className="flex flex-wrap justify-center gap-4 mt-8">
                   <button 
                     onClick={() => {
@@ -380,7 +381,7 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
                     Retry Quiz
                   </button>
                   <button 
-                    onClick={() => window.location.href = `/courses`}
+                    onClick={() => (window.location.href = `/courses`)}
                     className="px-6 py-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg shadow-sm transition-colors"
                   >
                     Back to Courses
@@ -390,7 +391,6 @@ const CoursePage: React.FC<PageProps> = ({ params }) => {
             </motion.div>
           )}
         </AnimatePresence>
-        
         <div className="mt-8 text-center text-sm text-gray-500">
           <p>© {new Date().getFullYear()} Jan Mańczak. All rights reserved.</p>
         </div>

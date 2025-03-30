@@ -20,6 +20,7 @@
 
 export interface Quiz {
   // The title of the quiz.
+  id?: string;
   quizTitle: string;
   description: string;
   //approximate time in minutes
