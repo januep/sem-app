@@ -8,6 +8,14 @@ const navItems = ["Główna", "Kursy", "O nas"];
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Helper function to determine the correct href based on the nav item
+  const getHref = (item: string) => {
+    if (item === "Główna") return "/";
+    if (item === "Kursy") return "/courses";
+    if (item === "O nas") return "/about";
+    return "#";
+  };
+
   return (
     <header className="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 border-b border-gray-200 animate-slideDown">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,13 +23,13 @@ const Header = () => {
           {/* Logo & Name */}
           <div className="flex items-center space-x-3">
             <img
-              src="/LucideLabButterfly.svg"
+              src="/PhButterflyBold.svg"
               alt="Papil.io Logo"
               width={32}
               height={32}
               className="transition-transform duration-300 hover:scale-110 hover:rotate-3"
             />
-            <span className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600">
               Papil.io
             </span>
           </div>
@@ -31,7 +39,7 @@ const Header = () => {
             {navItems.map((item) => (
               <Link
                 key={item}
-                href={item === "Główna" ? "/" : "/courses"}
+                href={getHref(item)}
                 className="relative group py-1 text-gray-800 font-medium hover:text-blue-600 transition-colors"
               >
                 {item}
@@ -97,7 +105,7 @@ const Header = () => {
               {navItems.map((item) => (
                 <Link
                   key={item}
-                  href={item === "Główna" ? "/" : "/courses"}
+                  href={getHref(item)}
                   onClick={() => setMobileMenuOpen(false)}
                   className="block py-2 text-gray-800 font-medium hover:text-blue-600 transition-colors"
                 >

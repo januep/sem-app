@@ -59,8 +59,8 @@ export default async function CoursesPage() {
   console.log(modules)
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-16 px-6">
-      <div className="max-w-6xl mx-auto">
+    <main className="min-h-screen py-16 px-6">
+   <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800 mb-3">Twoje kursy</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
