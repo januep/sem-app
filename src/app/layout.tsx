@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import Header from "./Header";
+import Background from "./components/Background";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   title: "Papil.io",
   description: "Automatic Course Making App",
   icons: {
-    icon: "/LucideLabButterfly.svg",
+    icon: "/PhButterflyBold.svg",
   },
 };
 
@@ -28,11 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen relative flex flex-col`}
       >
+        {/* Background component is rendered first so it sits behind everything */}
+        <Background />
         <Providers>
           <Header />
-          <main className="flex-1 pt-16">{children}</main>
+          <main className="flex-1 pt-16">
+            {children}
+          </main>
         </Providers>
       </body>
     </html>
