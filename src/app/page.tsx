@@ -21,7 +21,7 @@ export default function Home() {
   const router = useRouter();
 
   const handleGetStarted = () => {
-    router.push("/datasets");
+    router.push("/create");
   };
 
   return (
@@ -73,7 +73,7 @@ export default function Home() {
               cursor: "pointer",
             }}
           >
-            Rozpocznij teraz
+            Utwórz teraz
           </button>
         </div>
 

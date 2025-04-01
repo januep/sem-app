@@ -1,157 +1,189 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { 
+  FiDatabase, 
+  FiUpload, 
+  FiEdit, 
+  FiArrowRight, 
+  FiFolder, 
+  FiCpu, 
+  FiBookOpen 
+} from 'react-icons/fi'
 
-export default function CreateCoursePage() {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [processingStatus, setProcessingStatus] = useState<string>('');
-  const [completion, setCompletion] = useState<string>('');
+export default function ChooseDataset() {
+  const router = useRouter()
+  const [hoveredOption, setHoveredOption] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
-  const onDrop = async (acceptedFiles: File[]) => {
-    if (acceptedFiles.length === 0) return;
-
-    const file = acceptedFiles[0];
-    if (file.type !== 'text/plain') {
-      setProcessingStatus('Please upload a plain text (.txt) file');
-      return;
+  const handleOptionSelect = (option: string) => {
+    if (option === 'existing') {
+      router.push('/datasets/existing')
+    } else if (option === 'upload') {
+      router.push('/create/pdf')
+    } else if (option === 'prompt') {
+      router.push('/create/prompt')
     }
+  }
 
-    setFileName(file.name);
-    setIsProcessing(true);
-    setProcessingStatus('Processing text file with GPT‑3.5...');
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
 
-    try {
-      // 1) Prepare FormData with the .txt file
-      const formData = new FormData();
-      formData.append('text', file);
+  const handleDragLeave = () => {
+    setIsDragging(false)
+  }
 
-      // 2) Call our API route
-      const response = await fetch('/api/extract-text', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Server error response:', errorData);
-        throw new Error(errorData.error || 'Failed to process text file');
-      }
-
-      // 3) Parse the JSON response (with completion from GPT‑3.5)
-      const data = await response.json();
-      console.log('GPT‑3.5 Completion:', data.completion);
-
-      setCompletion(data.completion);
-      setProcessingStatus('Success! GPT‑3.5 completion received.');
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error('Error:', error.message);
-        setProcessingStatus(`Error: ${error.message}`);
-      } else {
-        console.error('Error:', error);
-        setProcessingStatus('Error: Unknown error');
-      }
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  // react-dropzone config
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: { 'text/plain': ['.txt'] },
-    disabled: isProcessing,
-    maxFiles: 1,
-  });
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    router.push('/datasets/upload')
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">Create a New Course (GPT‑3.5)</h1>
-      <p className="text-gray-600 mb-8">
-        Upload a text file. The file contents will be sent as a prompt to GPT‑3.5, 
-        and the response can help you build your course materials.
-      </p>
-
-      <div
-        {...getRootProps()}
-        className={`
-          border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors
-          ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
-          ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}
-        `}
-      >
-        <input {...getInputProps()} />
-        {isProcessing ? (
-          <div className="space-y-3">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="text-gray-600">Processing {fileName}...</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full bg-blue-50 text-blue-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
-              </svg>
-            </div>
-            <div>
-              {isDragActive ? (
-                <p className="text-lg text-blue-500 font-medium">Drop the text file here...</p>
-              ) : (
-                <>
-                  <p className="text-lg font-medium">Drag & drop a text file here, or click to select</p>
-                  <p className="text-sm text-gray-500 mt-2">Only plain text (.txt) files are accepted</p>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {processingStatus && (
-        <div
-          className={`mt-6 p-4 rounded-lg ${
-            processingStatus.startsWith('Error')
-              ? 'bg-red-50 text-red-600'
-              : 'bg-green-50 text-green-600'
-          }`}
-        >
-          {processingStatus}
-        </div>
-      )}
-
-      {completion && (
-        <div className="mt-6 bg-gray-50 p-4 rounded-lg">
-          <h2 className="text-xl font-bold mb-2">GPT‑3.5 Response</h2>
-          <p className="text-gray-700 whitespace-pre-wrap">{completion}</p>
-        </div>
-      )}
-
-      {fileName && !isProcessing && (
-        <div className="mt-8">
-          <button
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            onClick={() => console.log('Continuing to next step with GPT response...')}
-          >
-            Continue to Course Creation
-          </button>
-          <p className="text-sm text-gray-500 mt-2">
-            Note: This button just logs a message for now. You could store the GPT response in a database or route it elsewhere.
+    <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-gray-50 to-gray-100">
+      <div className="max-w-4xl w-full mx-auto px-6 py-16">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+            Twórz kursy w mgnieniu oka
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Wybierz sposób, w jaki chcesz utworzyć nowy kurs.
           </p>
         </div>
-      )}
-    </div>
-  );
+
+        {/* Options Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Existing Dataset Option */}
+          <div 
+            className={`bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 overflow-hidden ${
+              hoveredOption === 'existing' ? 'ring-2 ring-indigo-400' : ''
+            }`}
+            onMouseEnter={() => setHoveredOption('existing')}
+            onMouseLeave={() => setHoveredOption(null)}
+            onClick={() => handleOptionSelect('existing')}
+          >
+            <div className="h-48 flex items-center justify-center bg-indigo-50">
+              <FiDatabase className="text-6xl text-indigo-600" />
+            </div>
+            <div className="p-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                Skorzystaj z istniejącego zbioru danych
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Wybierz spośród naszej biblioteki wstępnie przetworzonych materiałów edukacyjnych przygotowanych do interaktywnej nauki.
+              </p>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">
+                  Ponad 20 zbiorów danych dostępnych
+                </span>
+                <FiArrowRight className="w-6 h-6 text-indigo-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* Upload PDF Option */}
+          <div 
+            className={`bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 overflow-hidden ${
+              hoveredOption === 'upload' ? 'ring-2 ring-indigo-400' : ''
+            } ${isDragging ? 'ring-2 ring-indigo-600 bg-indigo-50' : ''}`}
+            onMouseEnter={() => setHoveredOption('upload')}
+            onMouseLeave={() => setHoveredOption(null)}
+            onClick={() => handleOptionSelect('upload')}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <div className="h-48 flex items-center justify-center bg-indigo-50">
+              <FiUpload className="text-6xl text-indigo-600" />
+            </div>
+            <div className="p-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                Prześlij dokument PDF
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Przekształć swoje materiały szkoleniowe w interaktywne moduły nauki dzięki AI.
+              </p>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">
+                  Przeciągnij i upuść lub przeglądaj
+                </span>
+                <FiArrowRight className="w-6 h-6 text-indigo-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* Create Using Prompt Option */}
+          <div 
+            className={`bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 overflow-hidden ${
+              hoveredOption === 'prompt' ? 'ring-2 ring-indigo-400' : ''
+            }`}
+            onMouseEnter={() => setHoveredOption('prompt')}
+            onMouseLeave={() => setHoveredOption(null)}
+            onClick={() => handleOptionSelect('prompt')}
+          >
+            <div className="h-48 flex items-center justify-center bg-indigo-50">
+              <FiEdit className="text-6xl text-indigo-600" />
+            </div>
+            <div className="p-6">
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                Utwórz przy użyciu podpowiedzi
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Wygeneruj kurs, korzystając z interaktywnej podpowiedzi, która poprowadzi Twój kreatywny proces.
+              </p>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">
+                  Zacznij od podstaw
+                </span>
+                <FiArrowRight className="w-6 h-6 text-indigo-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Info Section */}
+        <div className="mt-16 bg-white rounded-2xl shadow-md p-8">
+          <h3 className="text-2xl font-bold text-gray-800 mb-4">Jak to działa</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+                <FiFolder className="text-3xl text-indigo-600" />
+              </div>
+              <h4 className="text-lg font-semibold mb-2 text-gray-800">
+                Wybierz lub Prześlij
+              </h4>
+              <p className="text-gray-600">
+                Wybierz istniejący zbiór danych lub prześlij swoje własne dokumenty PDF.
+              </p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+                <FiCpu className="text-3xl text-indigo-600" />
+              </div>
+              <h4 className="text-lg font-semibold mb-2 text-gray-800">
+                Przetwarzanie AI
+              </h4>
+              <p className="text-gray-600">
+                Nasza AI analizuje i przekształca treści w interaktywne materiały edukacyjne.
+              </p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
+                <FiBookOpen className="text-3xl text-indigo-600" />
+              </div>
+              <h4 className="text-lg font-semibold mb-2 text-gray-800">
+                Ucz się i angażuj
+              </h4>
+              <p className="text-gray-600">
+                Rozpocznij naukę z fiszkami, quizami, grami i nie tylko.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  )
 }

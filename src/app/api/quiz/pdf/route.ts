@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
+import pdfParse from 'pdf-parse';
 import { Quiz } from '@/app/types/quiz';
 
+// Inicjalizacja klienta OpenAI i Supabase
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -14,15 +16,32 @@ const supabase = createClient(
 
 export async function POST(request: Request) {
   try {
-    const { prompt } = await request.json();
+    // Pobierz dane formularza
+    const formData = await request.formData();
+    const pdfFile = formData.get('pdf');
 
-    if (!prompt) {
+    if (!pdfFile || !(pdfFile instanceof File)) {
       return NextResponse.json(
-        { error: 'Prompt is required' },
+        { error: 'PDF file is required' },
         { status: 400 }
       );
     }
 
+    // Odczytaj zawartość pliku do ArrayBuffer
+    const arrayBuffer = await pdfFile.arrayBuffer();
+    // Używamy nowej tablicy bajtów, aby uniknąć kopiowania niechcianych właściwości (np. "path")
+    const pdfBuffer = Buffer.from(new Uint8Array(arrayBuffer));
+    const pdfData = await pdfParse(pdfBuffer);
+    const textFromPdf = pdfData.text;
+
+    if (!textFromPdf) {
+      return NextResponse.json(
+        { error: 'Failed to extract text from PDF' },
+        { status: 400 }
+      );
+    }
+
+    // Definicja promptu systemowego
     const systemPrompt = `
       You are an expert quiz creator that creates JSON quiz data adhering to a specific format.
 
@@ -42,25 +61,19 @@ export async function POST(request: Request) {
        * 
        * Each question must include a unique numeric 'id' and a 'prompt' (the question text).
        * Use the properties defined below for each specific question type.
-       * 
-       * Follow these interfaces to create valid quiz JSON objects.
        */
 
       Quiz Interface:
       {
-        // The title of the quiz.
         quizTitle: string;
         description: string;
-        //approximate time in minutes
         approximateTime: number;
-        // from @heroicons/react
         heroIconName: string;
-        // An array of questions that follow the QuizQuestion union type.
         questions: QuizQuestion[];
       }
 
       Where QuizQuestion can be one of:
-      - MAMCQQuestion: Multiple Answer Multiple Choice question.
+      - MAMCQQuestion:
         {
           id: number;
           type: "MAMCQ";
@@ -69,7 +82,7 @@ export async function POST(request: Request) {
           correctAnswers: string[];
         }
 
-      - SAMCQQuestion: Single Answer Multiple Choice question.
+      - SAMCQQuestion:
         {
           id: number;
           type: "SAMCQ";
@@ -78,7 +91,7 @@ export async function POST(request: Request) {
           correctAnswer: string;
         }
 
-      - FillBlanksQuestion: Fill in the Blanks question.
+      - FillBlanksQuestion:
         {
           id: number;
           type: "FillBlanks";
@@ -87,7 +100,7 @@ export async function POST(request: Request) {
           answers: string[];
         }
 
-      - TrueFalseQuestion: True/False question.
+      - TrueFalseQuestion:
         {
           id: number;
           type: "TrueFalse";
@@ -95,7 +108,7 @@ export async function POST(request: Request) {
           correctAnswer: boolean;
         }
 
-      - MatchingQuestion: Matching question consists of pairs of terms and definitions.
+      - MatchingQuestion:
         {
           id: number;
           type: "Matching";
@@ -108,17 +121,19 @@ export async function POST(request: Request) {
           ];
         }
 
-      For heroIconName, use one of the common Heroicons like: "AcademicCapIcon", "BookOpenIcon", "BeakerIcon", "LightBulbIcon", "PuzzlePieceIcon", etc.
+      For heroIconName, use one of: "AcademicCapIcon", "BookOpenIcon", "BeakerIcon", "LightBulbIcon", "PuzzlePieceIcon", etc.
       
-      Generate a quiz based on the user's prompt. Respond with ONLY a valid JSON object that matches the Quiz interface. 
-      DO NOT include any explanations, comments, or markdown formatting in your response.
+      Generate a quiz based on the content of the provided PDF document. Respond with ONLY a valid JSON object that matches the Quiz interface. DO NOT include any explanations, comments, or markdown formatting in your response.
     `;
+
+    // Tworzymy prompt użytkownika, włączając treść wyekstrahowaną z PDF
+    const userPrompt = `Here is the content of a PDF document:\n\n${textFromPdf}`;
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4-turbo',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt }
+        { role: 'user', content: userPrompt }
       ],
       temperature: 0.7,
       max_tokens: 3000,
@@ -131,14 +146,14 @@ export async function POST(request: Request) {
       quizData = JSON.parse(content);
     } catch (_error) {
       console.error('Failed to parse OpenAI response as JSON:', content);
-      console.error(_error)
+      console.error(_error);
       return NextResponse.json(
         { error: 'Failed to generate valid quiz data. Please try again.' },
         { status: 500 }
       );
     }
 
-    // Insert into Supabase and get ID back
+    // Zapisujemy wygenerowany quiz do Supabase
     const { data, error: insertError } = await supabase
       .from('quizzes')
       .insert([

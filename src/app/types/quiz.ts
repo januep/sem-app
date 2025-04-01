@@ -18,6 +18,7 @@
  * Follow these interfaces to create valid quiz JSON objects.
  */
 
+
 export interface Quiz {
   // The title of the quiz.
   id?: string;
