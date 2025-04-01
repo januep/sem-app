@@ -21,7 +21,7 @@ export default function ChooseDataset() {
     if (option === 'existing') {
       router.push('/datasets/existing')
     } else if (option === 'upload') {
-      router.push('/create')
+      router.push('/create/pdf')
     } else if (option === 'prompt') {
       router.push('/create/prompt')
     }
