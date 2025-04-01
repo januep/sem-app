@@ -73,7 +73,7 @@ export default function AboutPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
           >
-            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600">Papil.io</span>
+            O <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600">Papil.io</span>
           </motion.h1>
           
           <motion.p 
@@ -82,7 +82,7 @@ export default function AboutPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
           >
-            Transforming PDFs into interactive learning experiences
+            Przekształcamy pliki PDF w interaktywne doświadczenia edukacyjne
           </motion.p>
           
           <motion.div
@@ -98,7 +98,7 @@ export default function AboutPage() {
               whileTap={{ scale: 0.95 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              Our Story
+              Nasza Historia
             </motion.a>
           </motion.div>
         </motion.div>
@@ -204,7 +204,7 @@ export default function AboutPage() {
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.6 }}
                 >
-                  The Story Behind Papil.io
+                  Historia Papil.io
                 </motion.h2>
                 
                 <motion.div
@@ -215,7 +215,7 @@ export default function AboutPage() {
                   transition={{ duration: 0.8 }}
                 >
                   <p>
-                    The name <span className="font-medium text-blue-600">Papil.io</span> comes from <em>Papilio</em>, the Latin word for butterfly. Just as a butterfly undergoes a beautiful metamorphosis, our platform transforms ordinary, static PDF documents into vibrant, interactive learning experiences.
+                    Nazwa <span className="font-medium text-blue-600">Papil.io</span> pochodzi od słowa <em>Papilio</em>, łacińskiego określenia motyla. Tak jak motyl przechodzi piękną metamorfozę, nasza platforma przekształca zwykłe, statyczne dokumenty PDF w pełne życia, interaktywne doświadczenia edukacyjne.
                   </p>
                   
                   <div className="my-12 relative">
@@ -235,18 +235,18 @@ export default function AboutPage() {
                             repeatType: "mirror"
                           }}
                         >
-                          <span className="text-blue-500 text-3xl">🦋</span>
+                          <img src="/PhButterflyBold.svg" alt="Motyl" className="w-10 h-10" />
                         </motion.div>
                       </span>
                     </div>
                   </div>
                   
                   <p>
-                    This platform was created as part of a master's thesis by <span className="font-medium">Jan Mańczak</span> at the <span className="font-medium">Poznan University of Economics and Business</span>, where he studies <span className="font-medium">Industry 4.0</span>. The project represents the intersection of technology, education, and digital transformation.
+                    Platforma ta została stworzona w ramach pracy magisterskiej przez <span className="font-medium">Jan Mańczak</span> na <span className="font-medium">Uniwersytecie Ekonomicznym w Poznaniu</span>, gdzie studiuje <span className="font-medium">Przemysł 4.0</span>. Projekt stanowi połączenie technologii, edukacji oraz transformacji cyfrowej.
                   </p>
                   
                   <p>
-                    Our mission is to make learning more accessible and engaging by leveraging artificial intelligence to convert static educational materials into dynamic, interactive courses.
+                    Naszą misją jest uczynienie nauki bardziej dostępną i angażującą poprzez wykorzystanie sztucznej inteligencji do przekształcania statycznych materiałów edukacyjnych w dynamiczne, interaktywne kursy.
                   </p>
                 </motion.div>
               </div>
@@ -264,7 +264,7 @@ export default function AboutPage() {
                 <div className="px-6 py-12 sm:px-12 lg:px-16">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">Master's Thesis Project</h3>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">Projekt pracy magisterskiej</h3>
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -273,15 +273,15 @@ export default function AboutPage() {
                       >
                         <div className="flex items-start mb-3">
                           <GraduationCap className="h-5 w-5 text-indigo-500 mt-1 mr-3" />
-                          <p className="text-gray-700">Poznan University of Economics and Business</p>
+                          <p className="text-gray-700">Uniwersytet Ekonomiczny w Poznaniu</p>
                         </div>
                         <div className="flex items-start mb-3">
                           <Book className="h-5 w-5 text-indigo-500 mt-1 mr-3" />
-                          <p className="text-gray-700">Industry 4.0 Program</p>
+                          <p className="text-gray-700">Program Przemysłu 4.0</p>
                         </div>
                         <div className="flex items-start mb-3">
                           <BarChart className="h-5 w-5 text-indigo-500 mt-1 mr-3" />
-                          <p className="text-gray-700">Focused on digital transformation and AI-enhanced learning</p>
+                          <p className="text-gray-700">Skupiony na transformacji cyfrowej i uczeniu wspomaganym przez sztuczną inteligencję</p>
                         </div>
                       </motion.div>
                       
@@ -295,7 +295,7 @@ export default function AboutPage() {
                           whileTap={{ scale: 0.95 }}
                           transition={{ type: "spring", stiffness: 400, damping: 17 }}
                         >
-                          Visit University
+                          Odwiedź Uniwersytet
                         </motion.a>
                       </div>
                     </div>
@@ -323,13 +323,13 @@ export default function AboutPage() {
                               }}
                               className="relative inline-block"
                             >
-                              <span className="text-7xl">🦋</span>
+                              <img src="/PhButterflyBold.svg" alt="Motyl" className="w-16 h-16" />
                               <div className="absolute -top-2 -right-2">
                                 <span className="text-3xl">✨</span>
                               </div>
                             </motion.div>
                             <h4 className="mt-4 text-xl font-bold text-gray-900">Papilio</h4>
-                            <p className="mt-1 text-gray-600">The transformation journey</p>
+                            <p className="mt-1 text-gray-600">Droga przemiany</p>
                           </div>
                         </div>
                       </div>
@@ -348,43 +348,43 @@ export default function AboutPage() {
                 transition={{ duration: 0.8 }}
                 className="text-center mb-16"
               >
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Approach</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Nasze Podejście</h2>
                 <p className="max-w-2xl mx-auto text-xl text-gray-600">
-                  How we transform traditional documents into engaging learning experiences
+                  Jak przekształcamy tradycyjne dokumenty w angażujące doświadczenia edukacyjne
                 </p>
               </motion.div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[
                   {
-                    icon: <Sparkles className="h-6 w-6 text-blue-600" />,
-                    title: "PDF Upload",
-                    description: "Upload any educational PDF document, no matter how dense or complex."
+                    icon: <Sparkles className="h-6 w-6 fill-blue-800"   />,
+                    title: "Przesyłanie PDF",
+                    description: "Prześlij dowolny dokument PDF edukacyjny, niezależnie od jego gęstości lub złożoności."
                   },
                   {
-                    icon: <Code className="h-6 w-6 text-indigo-600" />,
-                    title: "AI Processing",
-                    description: "Our advanced AI analyzes the content, identifying key concepts and learning points."
+                    icon: <Code className="h-6 w-6 fill-blue-800" />,
+                    title: "Przetwarzanie AI",
+                    description: "Nasza zaawansowana AI analizuje zawartość, identyfikując kluczowe pojęcia i punkty nauki."
                   },
                   {
-                    icon: <Sparkles className="h-6 w-6 text-purple-600" />,
-                    title: "Interactive Transformation",
-                    description: "Static content becomes dynamic quizzes, flashcards, and study materials."
+                    icon: <Sparkles className="h-6 w-6 fill-blue-800" />,
+                    title: "Interaktywna Transformacja",
+                    description: "Statyczna treść przekształca się w dynamiczne quizy, fiszki i materiały do nauki."
                   },
                   {
-                    icon: <Leaf className="h-6 w-6 text-green-600" />,
-                    title: "Adaptive Learning",
-                    description: "Material adapts to your understanding and learning style."
+                    icon: <Leaf className="h-6 w-6 fill-blue-800" />,
+                    title: "Adaptacyjne Nauczanie",
+                    description: "Materiał dostosowuje się do Twojego poziomu zrozumienia i stylu nauki."
                   },
                   {
-                    icon: <BarChart className="h-6 w-6 text-orange-600" />,
-                    title: "Progress Tracking",
-                    description: "Monitor your improvement with detailed analytics and insights."
+                    icon: <BarChart className="h-6 w-6 fill-blue-800" />,
+                    title: "Śledzenie Postępów",
+                    description: "Monitoruj swoje postępy dzięki szczegółowej analizie i wglądowi."
                   },
                   {
-                    icon: <Mountain className="h-6 w-6 text-teal-600" />,
-                    title: "Continuous Growth",
-                    description: "The platform evolves and improves with each user interaction."
+                    icon: <Mountain className="h-6 w-6 fill-blue-800" />,
+                    title: "Ciągły Rozwój",
+                    description: "Platforma rozwija się i udoskonala przy każdej interakcji użytkownika."
                   }
                 ].map((feature, index) => (
                   <motion.div
@@ -421,12 +421,9 @@ export default function AboutPage() {
               className="mt-24 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl p-8 sm:p-12 shadow-sm"
             >
               <div className="max-w-4xl mx-auto text-center">
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Vision</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-6">Nasza Wizja</h2>
                 <p className="text-xl text-gray-700 mb-8">
-                  We believe that education should be accessible, engaging, and adaptive. 
-                  With Papil.io, we're building a future where learning materials transform 
-                  to meet the needs of every student, just as a butterfly emerges from its 
-                  chrysalis with new capabilities and beauty.
+                  Wierzymy, że edukacja powinna być dostępna, angażująca i adaptacyjna. Z Papil.io budujemy przyszłość, w której materiały edukacyjne przekształcają się, aby sprostać potrzebom każdego ucznia, tak jak motyl wyłania się z kokon z nowymi zdolnościami i pięknem.
                 </p>
                 
                 <div className="mt-8">
@@ -435,7 +432,7 @@ export default function AboutPage() {
                     whileTap={{ scale: 0.95 }}
                   >
                     <Link href="/" className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                      Try Papil.io Today
+                      Wypróbuj Papil.io już dziś
                     </Link>
                   </motion.div>
                 </div>
