@@ -21,7 +21,7 @@ export default function ChooseDataset() {
     if (option === 'existing') {
       router.push('/datasets/existing')
     } else if (option === 'upload') {
-      router.push('/create')
+      router.push('/create/pdf')
     } else if (option === 'prompt') {
       router.push('/create/prompt')
     }
@@ -50,7 +50,7 @@ export default function ChooseDataset() {
             Twórz kursy w mgnieniu oka
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Wybierz sposób w jaki chcesz utworzyć nowy kurs.
+            Wybierz sposób, w jaki chcesz utworzyć nowy kurs.
           </p>
         </div>
 
@@ -70,14 +70,14 @@ export default function ChooseDataset() {
             </div>
             <div className="p-6">
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                Use Existing Dataset
+                Skorzystaj z istniejącego zbioru danych
               </h3>
               <p className="text-gray-600 mb-4">
-                Choose from our library of pre-processed educational materials ready for interactive learning.
+                Wybierz spośród naszej biblioteki wstępnie przetworzonych materiałów edukacyjnych przygotowanych do interaktywnej nauki.
               </p>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">
-                  20+ datasets available
+                  Ponad 20 zbiorów danych dostępnych
                 </span>
                 <FiArrowRight className="w-6 h-6 text-indigo-600" />
               </div>
@@ -101,14 +101,14 @@ export default function ChooseDataset() {
             </div>
             <div className="p-6">
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                Upload PDF Document
+                Prześlij dokument PDF
               </h3>
               <p className="text-gray-600 mb-4">
-                Transform your own training materials into interactive learning modules with AI.
+                Przekształć swoje materiały szkoleniowe w interaktywne moduły nauki dzięki AI.
               </p>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">
-                  Drag & drop or browse
+                  Przeciągnij i upuść lub przeglądaj
                 </span>
                 <FiArrowRight className="w-6 h-6 text-indigo-600" />
               </div>
@@ -129,14 +129,14 @@ export default function ChooseDataset() {
             </div>
             <div className="p-6">
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                Create Using Prompt
+                Utwórz przy użyciu podpowiedzi
               </h3>
               <p className="text-gray-600 mb-4">
-                Generate a course using an interactive prompt to guide your creative process.
+                Wygeneruj kurs, korzystając z interaktywnej podpowiedzi, która poprowadzi Twój kreatywny proces.
               </p>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">
-                  Start from scratch
+                  Zacznij od podstaw
                 </span>
                 <FiArrowRight className="w-6 h-6 text-indigo-600" />
               </div>
@@ -146,33 +146,39 @@ export default function ChooseDataset() {
 
         {/* Info Section */}
         <div className="mt-16 bg-white rounded-2xl shadow-md p-8">
-          <h3 className="text-2xl font-bold text-gray-800 mb-4">How It Works</h3>
+          <h3 className="text-2xl font-bold text-gray-800 mb-4">Jak to działa</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
                 <FiFolder className="text-3xl text-indigo-600" />
               </div>
-              <h4 className="text-lg font-semibold mb-2">Select or Upload</h4>
+              <h4 className="text-lg font-semibold mb-2 text-gray-800">
+                Wybierz lub Prześlij
+              </h4>
               <p className="text-gray-600">
-                Choose an existing dataset or upload your own PDF documents.
+                Wybierz istniejący zbiór danych lub prześlij swoje własne dokumenty PDF.
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
                 <FiCpu className="text-3xl text-indigo-600" />
               </div>
-              <h4 className="text-lg font-semibold mb-2">AI Processing</h4>
+              <h4 className="text-lg font-semibold mb-2 text-gray-800">
+                Przetwarzanie AI
+              </h4>
               <p className="text-gray-600">
-                Our AI analyzes and transforms content into interactive learning materials.
+                Nasza AI analizuje i przekształca treści w interaktywne materiały edukacyjne.
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center mb-4">
                 <FiBookOpen className="text-3xl text-indigo-600" />
               </div>
-              <h4 className="text-lg font-semibold mb-2">Learn & Engage</h4>
+              <h4 className="text-lg font-semibold mb-2 text-gray-800">
+                Ucz się i angażuj
+              </h4>
               <p className="text-gray-600">
-                Start learning with flashcards, quizzes, games, and more.
+                Rozpocznij naukę z fiszkami, quizami, grami i nie tylko.
               </p>
             </div>
           </div>

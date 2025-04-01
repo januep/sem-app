@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Header from '@/app/components/Header';
 
 
 export default function UploadDataset() {
@@ -43,7 +42,6 @@ export default function UploadDataset() {
 
   return (
     <>
-      <Header />
       <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-gray-50 to-gray-100">
         <div className="max-w-2xl w-full mx-auto px-6 py-16 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Upload Your PDF</h1>
