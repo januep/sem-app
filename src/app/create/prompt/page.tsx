@@ -18,7 +18,7 @@ export default function CreateQuizPrompt() {
     if (!prompt.trim()) {
       setStatus({
         type: 'error',
-        message: 'Please enter a prompt to generate a quiz.'
+        message: 'Proszę wprowadzić treść polecenia, aby wygenerować quiz.'
       });
       return;
     }
@@ -26,7 +26,7 @@ export default function CreateQuizPrompt() {
     setIsGenerating(true);
     setStatus({
       type: 'info',
-      message: 'Generating your quiz... This may take a few moments.'
+      message: 'Generowanie quizu... To może potrwać chwilę.'
     });
     
     try {
@@ -38,14 +38,14 @@ export default function CreateQuizPrompt() {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate quiz');
+        throw new Error(errorData.error || 'Nie udało się wygenerować quizu');
       }
       
       const data = await response.json();
       
       setStatus({
         type: 'success',
-        message: `Quiz "${data.quizTitle}" was successfully generated and saved!`
+        message: `Quiz "${data.quizTitle}" został pomyślnie wygenerowany i zapisany!`
       });
       
       // Optionally redirect to the quiz after a delay
@@ -57,7 +57,7 @@ export default function CreateQuizPrompt() {
       console.error('Error generating quiz:', error);
       setStatus({
         type: 'error',
-        message: error instanceof Error ? error.message : 'An unexpected error occurred'
+        message: error instanceof Error ? error.message : 'Wystąpił nieoczekiwany błąd'
       });
     } finally {
       setIsGenerating(false);
@@ -68,10 +68,10 @@ export default function CreateQuizPrompt() {
     <div className="max-w-4xl mx-auto p-6 md:p-8">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-          Create a Quiz Using AI
+          Stwórz quiz przy użyciu AI
         </h1>
         <p className="mt-3 text-lg text-gray-500">
-          Describe the quiz you want to create, and our AI will generate it for you.
+          Opisz quiz, który chcesz utworzyć, a nasza AI go wygeneruje.
         </p>
       </div>
       
@@ -79,7 +79,7 @@ export default function CreateQuizPrompt() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-2">
-              Quiz Description
+              Opis quizu
             </label>
             <div className="relative">
               <textarea
@@ -87,7 +87,7 @@ export default function CreateQuizPrompt() {
                 rows={6}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="E.g., Create a quiz about the American Civil War with 5 multiple choice questions, 2 true/false questions, and 1 matching question."
+                placeholder="Np. Utwórz quiz o wojnie secesyjnej w USA z 5 pytaniami wielokrotnego wyboru, 2 pytaniami prawda/fałsz i 1 pytaniem dopasowującym."
                 className="block w-full rounded-md border border-gray-300 shadow-sm 
                            focus:border-indigo-500 focus:ring-indigo-500 
                            text-gray-900 text-base py-3 px-4
@@ -96,7 +96,7 @@ export default function CreateQuizPrompt() {
               />
             </div>
             <p className="mt-2 text-xs text-gray-600">
-              Be specific about the topic, difficulty level, and types of questions you want.
+              Bądź precyzyjny w opisie tematu, poziomu trudności oraz rodzajów pytań, których oczekujesz.
             </p>
           </div>
           
@@ -118,10 +118,10 @@ export default function CreateQuizPrompt() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Generating...
+                  Generowanie...
                 </>
               ) : (
-                'Generate Quiz'
+                'Generuj quiz'
               )}
             </button>
           </div>
@@ -158,7 +158,6 @@ export default function CreateQuizPrompt() {
           </div>
         </div>
       )}
-      
       
     </div>
   );

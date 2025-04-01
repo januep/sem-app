@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "Papil.io",
   description: "Automatic Course Making App",
   icons: {
-    icon: "/LucideLabButterfly.svg",
+    icon: "/PhButterflyBold.svg",
   },
 };
 
