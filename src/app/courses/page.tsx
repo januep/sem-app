@@ -56,6 +56,7 @@ async function getQuizzes(): Promise<Module[]> {
 
 export default async function CoursesPage() {
   const modules = await getQuizzes();
+  console.log(modules)
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-16 px-6">
