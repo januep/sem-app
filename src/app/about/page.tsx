@@ -1,10 +1,17 @@
 'use client';
-
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
-
 import Link from 'next/link';
 import { Book, Code, Sparkles, BarChart, GraduationCap, Leaf, Mountain } from 'lucide-react';
+
+interface FloatingElementPosition {
+  x: number;
+  y: number;
+  scale: number;
+  delay: number;
+  duration: number;
+  animateY: number;
+}
 
 export default function AboutPage() {
   const containerRef = useRef(null);
@@ -15,8 +22,24 @@ export default function AboutPage() {
   const y = useTransform(scrollYProgress, [0, 0.2, 0.9, 1], [100, 0, 0, -100]);
   
   // Butterfly path animation
-  const butterflyPath = useRef<HTMLDivElement>(null);
+  const butterflyPath = useRef(null);
   const butterflyInView = useInView(butterflyPath, { once: true });
+
+  // Explicit type annotation for random positions
+  const [randomPositions, setRandomPositions] = useState<FloatingElementPosition[]>([]);
+
+  useEffect(() => {
+    // This will only run on the client since window is available then
+    const positions = Array.from({ length: 15 }).map(() => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      scale: Math.random() * 0.5 + 0.5,
+      delay: Math.random() * 5,
+      duration: Math.random() * 10 + 10,
+      animateY: Math.random() * -100 - 50,
+    }));
+    setRandomPositions(positions);
+  }, []);
 
   return (
     <div className="min-h-screen overflow-hidden bg-gradient-to-b from-white to-blue-50">
@@ -105,25 +128,25 @@ export default function AboutPage() {
         
         {/* Floating elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {Array.from({ length: 15 }).map((_, i) => (
+          {randomPositions.map((pos, i) => (
             <motion.div
               key={i}
               className="absolute w-8 h-8 rounded-full bg-gradient-to-r from-blue-300 to-indigo-300 opacity-40"
               initial={{
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                scale: Math.random() * 0.5 + 0.5,
+                x: pos.x,
+                y: pos.y,
+                scale: pos.scale,
               }}
               animate={{
-                y: [null, Math.random() * -100 - 50],
+                y: [null, pos.animateY],
                 opacity: [0.4, 0]
               }}
               transition={{
-                duration: Math.random() * 10 + 10,
+                duration: pos.duration,
                 repeat: Infinity,
                 repeatType: "loop",
                 ease: "linear",
-                delay: Math.random() * 5,
+                delay: pos.delay,
               }}
             />
           ))}
@@ -357,7 +380,7 @@ export default function AboutPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {[
                   {
-                    icon: <Sparkles className="h-6 w-6 fill-blue-800"   />,
+                    icon: <Sparkles className="h-6 w-6 fill-blue-800" />,
                     title: "Przesyłanie PDF",
                     description: "Prześlij dowolny dokument PDF edukacyjny, niezależnie od jego gęstości lub złożoności."
                   },
