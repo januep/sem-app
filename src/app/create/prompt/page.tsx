@@ -2,32 +2,29 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from "framer-motion";
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function CreateQuizPrompt() {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [status, setStatus] = useState<{ type: 'success' | 'error' | 'info' | null; message: string }>({ 
-    type: null, 
-    message: '' 
-  });
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent) {
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+  };
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
     
     if (!prompt.trim()) {
-      setStatus({
-        type: 'error',
-        message: 'Proszę wprowadzić treść polecenia, aby wygenerować quiz.'
-      });
+      toast.error('Proszę wprowadzić treść polecenia, aby wygenerować quiz.');
       return;
     }
     
     setIsGenerating(true);
-    setStatus({
-      type: 'info',
-      message: 'Generowanie quizu... To może potrwać chwilę.'
-    });
+    toast.loading('Generowanie quizu... To może potrwać chwilę.', { id: 'generating' });
     
     try {
       const response = await fetch('/api/generate-quiz', {
@@ -43,45 +40,59 @@ export default function CreateQuizPrompt() {
       
       const data = await response.json();
       
-      setStatus({
-        type: 'success',
-        message: `Quiz "${data.quizTitle}" został pomyślnie wygenerowany i zapisany!`
+      toast.success(`Quiz "${data.quizTitle}" został pomyślnie wygenerowany i zapisany!`, { 
+        id: 'generating', 
+        duration: 3000 
       });
       
-      // Optionally redirect to the quiz after a delay
       setTimeout(() => {
         router.push(`/courses/${data.id}`);
-      }, 3000);
+      }, 2000);
       
     } catch (error) {
       console.error('Error generating quiz:', error);
-      setStatus({
-        type: 'error',
-        message: error instanceof Error ? error.message : 'Wystąpił nieoczekiwany błąd'
-      });
+      toast.error(error instanceof Error ? error.message : 'Wystąpił nieoczekiwany błąd', { id: 'generating' });
     } finally {
       setIsGenerating(false);
     }
   }
   
   return (
-    <div className="max-w-4xl mx-auto p-6 md:p-8">
-      <div className="text-center mb-8">
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+      className="max-w-4xl mx-auto p-6 md:p-8"
+    >
+      <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
+      
+      <motion.div 
+        className="text-center mb-8"
+        variants={fadeIn}
+      >
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
           Stwórz quiz przy użyciu AI
         </h1>
         <p className="mt-3 text-lg text-gray-500">
           Opisz quiz, który chcesz utworzyć, a nasza AI go wygeneruje.
         </p>
-      </div>
+      </motion.div>
       
-      <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
+      <motion.div 
+        className="bg-white rounded-xl shadow-md p-6 md:p-8"
+        variants={fadeIn}
+        whileHover={{ boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)" }}
+        transition={{ duration: 0.2 }}
+      >
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-2">
               Opis quizu
             </label>
-            <div className="relative">
+            <motion.div 
+              className="relative"
+              whileTap={{ scale: 0.995 }}
+            >
               <textarea
                 id="prompt"
                 rows={6}
@@ -94,23 +105,25 @@ export default function CreateQuizPrompt() {
                            placeholder:text-gray-500 placeholder:font-normal"
                 disabled={isGenerating}
               />
-            </div>
+            </motion.div>
             <p className="mt-2 text-xs text-gray-600">
               Bądź precyzyjny w opisie tematu, poziomu trudności oraz rodzajów pytań, których oczekujesz.
             </p>
           </div>
           
           <div className="flex items-center justify-end">
-            <button
+            <motion.button
               type="submit"
               disabled={isGenerating || !prompt.trim()}
               className={`
                 flex items-center justify-center rounded-md px-5 py-3 text-base font-medium text-white
-                transition duration-150 ease-in-out
                 ${isGenerating || !prompt.trim() 
                   ? 'bg-indigo-400 cursor-not-allowed' 
-                  : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'}
+                  : 'bg-indigo-600'}
               `}
+              whileHover={!isGenerating && prompt.trim() ? { scale: 1.02, backgroundColor: "#4338ca" } : {}}
+              whileTap={!isGenerating && prompt.trim() ? { scale: 0.98 } : {}}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               {isGenerating ? (
                 <>
@@ -123,42 +136,10 @@ export default function CreateQuizPrompt() {
               ) : (
                 'Generuj quiz'
               )}
-            </button>
+            </motion.button>
           </div>
         </form>
-      </div>
-      
-      {status.type && (
-        <div className={`mt-6 rounded-md p-4 ${
-          status.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' :
-          status.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200' :
-          'bg-blue-50 text-blue-800 border border-blue-200'
-        }`}>
-          <div className="flex">
-            <div className="flex-shrink-0">
-              {status.type === 'success' && (
-                <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-              )}
-              {status.type === 'error' && (
-                <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              )}
-              {status.type === 'info' && (
-                <svg className="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-              )}
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium">{status.message}</p>
-            </div>
-          </div>
-        </div>
-      )}
-      
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
