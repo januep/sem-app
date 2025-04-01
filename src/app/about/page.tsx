@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useInView, useMotionTemplate } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 
 import Link from 'next/link';
 import { Book, Code, Sparkles, BarChart, GraduationCap, Leaf, Mountain } from 'lucide-react';
 
 export default function AboutPage() {
   const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { once: false, margin: "-100px 0px" });
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
   
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.9, 1], [0, 1, 1, 0]);
