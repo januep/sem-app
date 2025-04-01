@@ -34,9 +34,9 @@ export default function CreateQuizFromPDF() {
       const file = e.dataTransfer.files[0];
       if (file.type === 'application/pdf') {
         setPdfFile(file);
-        toast.success('PDF uploaded successfully!');
+        toast.success('PDF został pomyślnie przesłany!');
       } else {
-        toast.error('Please upload a PDF file');
+        toast.error('Proszę przesłać plik PDF');
       }
     }
   };
@@ -46,9 +46,9 @@ export default function CreateQuizFromPDF() {
       const file = e.target.files[0];
       if (file.type === 'application/pdf') {
         setPdfFile(file);
-        toast.success('PDF uploaded successfully!');
+        toast.success('PDF został pomyślnie przesłany!');
       } else {
-        toast.error('Please upload a PDF file');
+        toast.error('Proszę przesłać plik PDF');
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
@@ -56,19 +56,19 @@ export default function CreateQuizFromPDF() {
     }
   };
 
-  // Start simulated progress for better UX
+  // Start symulacji postępu dla lepszego UX
   const startProgressSimulation = () => {
-    // Reset progress
+    // Resetuj postęp
     setGenerationProgress(0);
     
-    // Simulate progress in a realistic way
-    // PDF processing typically starts slow, speeds up, then slows down at the end
+    // Symulacja postępu w realistyczny sposób:
+    // Przetwarzanie PDF zaczyna się wolno, przyspiesza, a potem zwalnia na końcu
     progressInterval.current = setInterval(() => {
       setGenerationProgress(prev => {
-        if (prev < 20) return prev + 0.5; // Initial slow phase
-        if (prev < 70) return prev + 1.2; // Middle faster phase
-        if (prev < 90) return prev + 0.3; // Slowing down phase
-        return prev; // Stay at 90% until real completion
+        if (prev < 20) return prev + 0.5; // Początkowa faza
+        if (prev < 70) return prev + 1.2; // Faza przyspieszenia
+        if (prev < 90) return prev + 0.3; // Faza zwalniania
+        return prev; // Pozostaje na 90% do faktycznego ukończenia
       });
     }, 200);
   };
@@ -78,7 +78,7 @@ export default function CreateQuizFromPDF() {
       clearInterval(progressInterval.current);
       progressInterval.current = null;
     }
-    // Jump to 100% on completion
+    // Skok do 100% po ukończeniu
     setGenerationProgress(100);
   };
 
@@ -86,7 +86,7 @@ export default function CreateQuizFromPDF() {
     e.preventDefault();
 
     if (!pdfFile) {
-      toast.error('Please upload a PDF file to generate a quiz');
+      toast.error('Proszę przesłać plik PDF, aby wygenerować quiz');
       return;
     }
 
@@ -95,21 +95,21 @@ export default function CreateQuizFromPDF() {
     
     try {
       const formData = new FormData();
-      formData.append('pdf', pdfFile); // Fixed: only append once
+      formData.append('pdf', pdfFile);
 
-      toast.loading('Creating your quiz from PDF... This may take a minute or two.');
+      toast.loading('Tworzenie Twojego quizu z PDF... Może to potrwać minutę lub dwie.');
       
       const response = await fetch('/api/quiz/pdf', {
         method: 'POST',
         body: formData,
       });
 
-      // Clear loading toast
+      // Usuń powiadomienie ładowania
       toast.dismiss();
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate quiz from PDF');
+        throw new Error(errorData.error || 'Nie udało się wygenerować quizu z PDF');
       }
 
       const data = await response.json();
@@ -117,9 +117,9 @@ export default function CreateQuizFromPDF() {
       stopProgressSimulation();
       setIsGenerating(false);
       
-      toast.success(`Quiz "${data.quizTitle || 'New Quiz'}" successfully created!`);
+      toast.success(`Quiz "${data.quizTitle || 'Nowy Quiz'}" został pomyślnie utworzony!`);
       
-      // Redirect the user after a short delay
+      // Przekieruj użytkownika po krótkim opóźnieniu
       setTimeout(() => {
         router.push(`/courses/${data.id}`);
       }, 1500);
@@ -128,7 +128,7 @@ export default function CreateQuizFromPDF() {
       stopProgressSimulation();
       setIsGenerating(false);
       
-      toast.error(error instanceof Error ? error.message : 'Failed to generate quiz');
+      toast.error(error instanceof Error ? error.message : 'Nie udało się wygenerować quizu');
       console.error('Error generating quiz:', error);
     }
   };
@@ -148,10 +148,10 @@ export default function CreateQuizFromPDF() {
           transition={{ delay: 0.1 }}
         >
           <h1 className="text-4xl font-bold text-gray-800 mb-4 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
-            PDF to Quiz Generator
+            Generator quizu z PDF
           </h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Upload any PDF document and our AI will transform it into an interactive quiz in seconds.
+            Prześlij dowolny dokument PDF, a nasza AI przekształci go w interaktywny quiz w kilka sekund.
           </p>
         </motion.div>
 
@@ -198,10 +198,10 @@ export default function CreateQuizFromPDF() {
                         <FileUp className="h-12 w-12 text-blue-500" />
                       </motion.div>
                       <h3 className="text-lg font-medium text-gray-800 mb-2">
-                        Drag & drop your PDF here
+                        Przeciągnij i upuść swój PDF tutaj
                       </h3>
                       <p className="text-sm text-gray-500 mb-4">
-                        or click to browse your files
+                        lub kliknij, aby przeglądać swoje pliki
                       </p>
                       <motion.button
                         type="button"
@@ -210,7 +210,7 @@ export default function CreateQuizFromPDF() {
                         whileTap={{ scale: 0.98 }}
                       >
                         <Upload className="w-4 h-4 mr-2" />
-                        Browse Files
+                        Przeglądaj pliki
                       </motion.button>
                     </div>
                   </motion.div>
@@ -252,11 +252,11 @@ export default function CreateQuizFromPDF() {
                     >
                       {isGenerating ? (
                         <span className="inline-flex items-center">
-                          <span className="mr-2">Generating your quiz...</span>
+                          <span className="mr-2">Generowanie quizu...</span>
                         </span>
                       ) : (
                         <span className="inline-flex items-center">
-                          Create Quiz
+                          Utwórz Quiz
                           <ChevronRight className="ml-2 h-5 w-5" />
                         </span>
                       )}
@@ -267,7 +267,7 @@ export default function CreateQuizFromPDF() {
             </form>
           </div>
           
-          {/* Loading Animation */}
+          {/* Animacja ładowania */}
           <AnimatePresence>
             {isGenerating && (
               <motion.div 
@@ -279,7 +279,7 @@ export default function CreateQuizFromPDF() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <p className="text-sm font-medium text-gray-700">
-                      Generating your quiz...
+                      Generowanie quizu...
                     </p>
                     <p className="text-sm font-medium text-blue-600">
                       {Math.floor(generationProgress)}%
@@ -299,7 +299,7 @@ export default function CreateQuizFromPDF() {
                     <div className="flex space-x-8 items-center text-sm text-gray-500 px-5 py-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center">
                         <Loader className="w-4 h-4 mr-2 text-blue-500 animate-spin" />
-                        <span>Reading PDF</span>
+                        <span>Odczytywanie PDF</span>
                       </div>
                       
                       <div className={`flex items-center ${generationProgress > 30 ? 'text-blue-600' : 'opacity-50'}`}>
@@ -309,12 +309,12 @@ export default function CreateQuizFromPDF() {
                         >
                           <Sparkles className="w-4 h-4 mr-2" />
                         </motion.div>
-                        <span>Creating questions</span>
+                        <span>Tworzenie pytań</span>
                       </div>
                       
                       <div className={`flex items-center ${generationProgress > 70 ? 'text-blue-600' : 'opacity-50'}`}>
                         <CheckCircle className={`w-4 h-4 mr-2 ${generationProgress > 70 ? 'text-green-500' : ''}`} />
-                        <span>Finalizing quiz</span>
+                        <span>Finalizacja quizu</span>
                       </div>
                     </div>
                   </div>
@@ -330,25 +330,27 @@ export default function CreateQuizFromPDF() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">How It Works</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Jak to działa</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 icon: <FileUp className="h-6 w-6 text-blue-500" />,
-                title: "Upload PDF",
-                description: "Simply upload any PDF document containing the learning material you want to convert."
+                title: "Prześlij PDF",
+                description: "Po prostu prześlij dowolny dokument PDF zawierający materiał edukacyjny, który chcesz przekonwertować."
               },
               {
-                icon: <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 4 }}>
-                  <AlertCircle className="h-6 w-6 text-purple-500" />
-                </motion.div>,
-                title: "AI Processing",
-                description: "Our advanced AI reads through the content and creates relevant quiz questions."
+                icon: (
+                  <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 4 }}>
+                    <AlertCircle className="h-6 w-6 text-purple-500" />
+                  </motion.div>
+                ),
+                title: "Przetwarzanie AI",
+                description: "Nasza zaawansowana AI analizuje treść i tworzy odpowiednie pytania quizowe."
               },
               {
                 icon: <CheckCircle className="h-6 w-6 text-green-500" />,
-                title: "Ready to Use",
-                description: "Get an interactive quiz complete with answers and explanations in seconds."
+                title: "Gotowy do użycia",
+                description: "Otrzymaj interaktywny quiz wraz z odpowiedziami i wyjaśnieniami w kilka sekund."
               }
             ].map((feature, index) => (
               <motion.div 
