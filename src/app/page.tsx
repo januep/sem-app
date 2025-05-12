@@ -144,9 +144,9 @@ export default function Home() {
                 title: "HR Manager",
               },
               {
-                quote: "Jestem dumna z męża!",
-                name: "Teresa Mańczak",
-                title: "Wife",
+                quote: "Aplikacja wygląda naprawdę świetnie!",
+                name: "Teresa 1234",
+                title: "User",
               },
               {
                 quote: "Nikt się nie spodziewa Hiszpańskiej Inkwizycji.",
