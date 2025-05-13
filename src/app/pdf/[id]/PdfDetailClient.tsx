@@ -8,7 +8,7 @@ import {
   AlertTriangle, Info, LoaderCircle, CheckCircle,
   XCircle, ArrowLeft, Download, Loader
 } from 'lucide-react';
-import { supabase, supabaseAlt } from '@/app/lib/supabaseClient';
+import { supabaseAnonKey } from '@/app/lib/supabaseClient';
 import { Database } from '@/app/lib/database.types';
 
 type PdfDocument = Database['public']['Tables']['pdf_documents']['Row'];
@@ -72,7 +72,7 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
       const data: PdfDocument = await res.json();
       setPdf(data);
 
-      const { data: urlData, error: urlErr } = supabaseAlt
+      const { data: urlData, error: urlErr } = supabaseAnonKey
         .storage
         .from('pdfs')
         .getPublicUrl(data.path);

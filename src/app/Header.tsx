@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import ThemeToggle from "./components/ThemeToggle";
 
-const navItems = ["Główna", "Kursy", "O nas"];
+const navItems = ["Główna", "Kursy", "PDF", "O nas"];
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -12,7 +12,9 @@ const Header = () => {
   const getHref = (item: string) => {
     if (item === "Główna") return "/";
     if (item === "Kursy") return "/courses";
+    if (item === "PDF") return "/pdf";
     if (item === "O nas") return "/about";
+    
     return "#";
   };
 

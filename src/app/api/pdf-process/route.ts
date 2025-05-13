@@ -1,5 +1,5 @@
 
-import { supabaseAlt } from '@/app/lib/supabaseClient'
+import { supabaseAnonKey } from '@/app/lib/supabaseClient'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // invoke the deployed Edge Function named "pdf-process"
-    const { data, error } = await supabaseAlt.functions.invoke('pdf-process', {
+    const { data, error } = await supabaseAnonKey.functions.invoke('pdf-process', {
       body: { document_id }
     })
 

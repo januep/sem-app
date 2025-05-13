@@ -1,6 +1,6 @@
 // src/app/api/pdf/[id]/route.ts
 import { Database } from '@/app/lib/database.types'
-import { supabase } from '@/app/lib/supabaseClient'
+import { supabaseAnonKey } from '@/app/lib/supabaseClient'
 
 import { NextResponse } from 'next/server'
 
@@ -13,7 +13,7 @@ export async function GET(
     return NextResponse.json({ error: 'PDF ID is required' }, { status: 400 })
   }
 
-  const { data: pdf, error } = await supabase
+  const { data: pdf, error } = await supabaseAnonKey
     .from<Database['public']['Tables']['pdf_documents']['Row']>('pdf_documents')
     .select(`
       id, filename, uploaded_at, page_count, title, author,
