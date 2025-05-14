@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabaseAlt } from '@/app/lib/supabaseClient'
 import { v4 as uuidv4 } from 'uuid'
 import { PDFDocument } from 'pdf-lib'
 import pdfParse from 'pdf-parse'
+import { supabaseAdmin } from '@/app/lib/supabaseAdmin'
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     const path = `raw/${id}__${file.name}`
 
     // upload to storage
-    const { error: uploadErr } = await supabaseAlt
+    const { error: uploadErr } = await supabaseAdmin
       .storage
       .from('pdfs')
       .upload(path, file, { cacheControl: '3600', upsert: false })
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     const modificationDate = pdfDoc.getModificationDate()?.toISOString() || null
 
     // only insert the columns that actually exist:
-    const { error: dbErr } = await supabaseAlt
+    const { error: dbErr } = await supabaseAdmin
       .from('pdf_documents')
       .insert([{
         id,

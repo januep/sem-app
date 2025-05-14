@@ -1,5 +1,7 @@
 // lib/supabaseClient.ts
 import { createClient } from '@supabase/supabase-js';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Database } from './database.types';
 
 // export const supabase = createClient(
 //   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,6 +18,8 @@ export const supabaseAnonKey = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
+
+export const supabase = createClientComponentClient<Database>()
 
 // export const supabaseServiceRole = createClient(
 //   process.env.NEXT_PUBLIC_SUPABASE_URL!,

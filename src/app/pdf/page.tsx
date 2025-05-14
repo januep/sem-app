@@ -95,23 +95,44 @@ export default function PdfListClient() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 text-slate-800 px-4 py-12 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-10 text-center">
-          <motion.h1
-            initial={{ y: -30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 120, damping: 10, delay: 0.2 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600"
-          >
-            Uploaded PDF Documents
-          </motion.h1>
-          <motion.p
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 120, damping: 10, delay: 0.4 }}
-            className="mt-2 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto"
-          >
-            Browse and manage your uploaded PDF files.
-          </motion.p>
+        <header className="mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+            <motion.div 
+              initial={{ y: -30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 120, damping: 10, delay: 0.2 }}
+              className="text-center sm:text-left mb-4 sm:mb-0"
+            >
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+                Twoje dokumenty
+              </h1>
+              <p className="mt-2 text-base sm:text-lg text-slate-600">
+                Zarządzaj swoimi dokumentami PDF
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 120, damping: 10, delay: 0.5 }}
+            >
+              <Link href="/create/upload" legacyBehavior>
+                <a className="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 group">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-5 w-5 mr-2 group-hover:translate-y-[-2px] transition-transform" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor" 
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Dodaj PDF
+                </a>
+              </Link>
+            </motion.div>
+          </div>
         </header>
 
         {pdfs && pdfs.length > 0 ? (
@@ -212,7 +233,23 @@ export default function PdfListClient() {
           >
             <Info size={64} className="text-slate-400 mb-6" />
             <h2 className="text-2xl font-semibold text-slate-700 mb-2">No PDFs Found</h2>
-            <p className="text-slate-500 max-w-md mx-auto">Upload some documents to see them listed here.</p>
+            <p className="text-slate-500 max-w-md mx-auto mb-8">Upload some documents to see them listed here.</p>
+            
+            <Link href="/create/upload" legacyBehavior>
+              <a className="inline-flex items-center justify-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200 group">
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-5 w-5 mr-2 group-hover:translate-y-[-2px] transition-transform" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor" 
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Upload Your First PDF
+              </a>
+            </Link>
           </motion.div>
         )}
       </div>

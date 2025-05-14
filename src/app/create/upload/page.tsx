@@ -336,7 +336,7 @@ export default function UploadPage() {
                 initial="idle"
                 whileHover="hover"
                 whileTap="tap"
-                className="w-full flex justify-center items-center py-3 px-4 bg-green-600 text-white font-medium rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                className="w-full flex justify-center items-center py-3 px-4 bg-green-600 text-white font-medium rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors cursor-pointer"
               >
                 {isCloudUploading ? (
                   <>
