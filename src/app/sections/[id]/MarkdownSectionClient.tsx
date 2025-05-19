@@ -1,0 +1,160 @@
+// app/sections/[id]/MarkdownSectionClient.tsx
+'use client'
+
+import React from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { motion, Variants } from 'framer-motion'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+import type { Components } from 'react-markdown'
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  show:  { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.3 } }
+}
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show:   { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
+}
+
+const components: Components = {
+  h1: ({ children, ...props }) => (
+    <motion.div variants={itemVariants} className="relative my-12 first:mt-0">
+      <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-2 h-16 bg-gradient-to-b from-blue-500 to-violet-500 rounded-full" />
+      <motion.h1
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+        className="text-4xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-500 to-violet-600 py-4 pl-2 mb-4"
+        {...props}
+      >{children}</motion.h1>
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mb-8" />
+      <div className="absolute right-0 bottom-0 w-20 h-20 rounded-full bg-blue-400/5 -z-10 blur-2xl" />
+    </motion.div>
+  ),
+  h2: ({ children, ...props }) => (
+    <motion.h2 variants={itemVariants}
+      className="text-2xl md:text-3xl font-bold text-blue-700 mt-10 mb-4" {...props}>
+      {children}
+    </motion.h2>
+  ),
+  p: ({ children, ...props }) => (
+    <motion.p variants={itemVariants}
+      className="text-gray-700 leading-relaxed my-4" {...props}>
+      {children}
+    </motion.p>
+  ),
+  a: ({ children, ...props }) => (
+    <a className="text-blue-600 font-medium hover:text-blue-800 underline decoration-2 decoration-blue-400/30 hover:decoration-blue-600/50"
+       {...props} target="_blank" rel="noopener noreferrer">
+      {children}
+    </a>
+  ),
+  code: ({ inline, className, children, ...props }) => {
+    const match = /language-(\w+)/.exec(className || '')
+    return !inline && match ? (
+      <motion.div variants={itemVariants}>
+        <SyntaxHighlighter
+          style={oneLight}
+          language={match[1]}
+          PreTag="div"
+          className="rounded-lg shadow-md my-6 overflow-hidden"
+          {...props}
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      </motion.div>
+    ) : (
+      <code className="font-mono bg-gray-200 px-1.5 py-0.5 rounded text-sm text-gray-800" {...props}>
+        {children}
+      </code>
+    )
+  },
+  ul: ({ children, ...props }) => (
+    <motion.ul variants={itemVariants}
+      className="pl-6 list-disc space-y-2 my-6 text-gray-700" {...props}>
+      {children}
+    </motion.ul>
+  ),
+  ol: ({ children, ...props }) => (
+    <motion.ol variants={itemVariants}
+      className="pl-6 list-decimal space-y-2 my-6 text-gray-700" {...props}>
+      {children}
+    </motion.ol>
+  ),
+  blockquote: ({ children, ...props }) => (
+    <motion.blockquote variants={itemVariants}
+      className="pl-4 border-l-4 border-blue-500 bg-blue-50 py-2 px-4 my-6 rounded-r-lg italic text-gray-700"
+      {...props}
+    >
+      {children}
+    </motion.blockquote>
+  ),
+  table: ({ children, ...props }) => (
+    <motion.div variants={itemVariants}
+      className="my-8 overflow-x-auto rounded-lg shadow-md bg-white">
+      <table className="w-full border-collapse" {...props}>
+        {children}
+      </table>
+    </motion.div>
+  ),
+  thead: ({ children, ...props }) => (
+    <thead className="bg-blue-50 text-blue-800 border-b-2 border-blue-100" {...props}>
+      {children}
+    </thead>
+  ),
+  tbody: ({ children, ...props }) => (
+    <tbody className="divide-y divide-gray-200" {...props}>
+      {children}
+    </tbody>
+  ),
+  tr: ({ children, ...props }) => (
+    <tr className="hover:bg-gray-50 transition-colors duration-150" {...props}>
+      {children}
+    </tr>
+  ),
+  th: ({ children, ...props }) => (
+    <th className="px-6 py-3 text-left font-semibold text-sm tracking-wider" {...props}>
+      {children}
+    </th>
+  ),
+  td: ({ children, ...props }) => (
+    <td className="px-6 py-4 whitespace-nowrap text-gray-700 text-sm" {...props}>
+      {children}
+    </td>
+  ),
+  img: ({ alt, ...props }) => (
+    <motion.div variants={itemVariants} className="my-8">
+      <motion.img whileHover={{ scale: 1.02 }}
+        transition={{ type: 'spring', stiffness: 300 }}
+        className="rounded-lg shadow-md mx-auto max-w-full h-auto"
+        alt={alt} {...props}
+      />
+    </motion.div>
+  ),
+  hr: ({ ...props }) => (
+    <motion.hr variants={itemVariants}
+      className="my-8 border-t-2 border-gray-200" {...props} />
+  ),
+}
+
+interface Props {
+  title: string
+  markdown: string
+}
+
+export default function MarkdownSectionClient({ title, markdown }: Props) {
+  return (
+    <div className="max-w-6xl mx-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+      <motion.div initial="hidden" animate="show" variants={containerVariants}
+        className="prose prose-slate lg:prose-xl max-w-none">
+        <h1 className="mb-8">{title}</h1>
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+          {markdown}
+        </ReactMarkdown>
+      </motion.div>
+    </div>
+  )
+}

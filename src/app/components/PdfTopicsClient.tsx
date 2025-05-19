@@ -1,38 +1,25 @@
-//app/pdf/[id]/PdfDetailClient.tsx
-"use client";
 
-import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
+'use client';
+
+import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 import {
-  FileText,
-  CalendarDays,
-  BookOpen,
-  User,
-  Tag,
-  Hash,
-  Type,
-  AlertTriangle,
-  Info,
-  LoaderCircle,
-  CheckCircle,
-  XCircle,
-  ArrowLeft,
-  Download,
-  Loader,
-  List,
-} from "lucide-react";
-import { supabaseAnonKey } from "@/app/lib/supabaseClient";
-import { Database } from "@/app/lib/database.types";
+  FileText, CalendarDays, BookOpen, User, Tag, Hash, Type,
+  AlertTriangle, Info, LoaderCircle, CheckCircle,
+  XCircle, ArrowLeft, Download, Loader, List
+} from 'lucide-react';
+import { supabaseAnonKey } from '@/app/lib/supabaseClient';
+import { Database } from '@/app/lib/database.types';
 
-type PdfDocument = Database["public"]["Tables"]["pdf_documents"]["Row"];
+type PdfDocument = Database['public']['Tables']['pdf_documents']['Row'];
 
 interface PdfDetailClientProps {
   pdfId: string;
 }
 
 const formatNumber = (num: number | null | undefined): string =>
-  num == null ? "N/A" : num.toLocaleString();
+  num == null ? 'N/A' : num.toLocaleString();
 
 const DetailItem: React.FC<{
   icon: React.ElementType;
@@ -40,13 +27,7 @@ const DetailItem: React.FC<{
   value?: string | number | null;
   isBoolean?: boolean;
   booleanValue?: boolean;
-}> = ({
-  icon: Icon,
-  label,
-  value,
-  isBoolean = false,
-  booleanValue = false,
-}) => (
+}> = ({ icon: Icon, label, value, isBoolean = false, booleanValue = false }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
@@ -67,7 +48,7 @@ const DetailItem: React.FC<{
           </span>
         )
       ) : (
-        <p className="text-lg font-semibold text-slate-700">{value ?? "N/A"}</p>
+        <p className="text-lg font-semibold text-slate-700">{value ?? 'N/A'}</p>
       )}
     </div>
   </motion.div>
@@ -97,14 +78,15 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
       const data: PdfDocument = await res.json();
       setPdf(data);
 
-      const { data: urlData, error: urlErr } = supabaseAnonKey.storage
-        .from("pdfs")
+      const { data: urlData, error: urlErr } = supabaseAnonKey
+        .storage
+        .from('pdfs')
         .getPublicUrl(data.path);
-      if (urlErr) console.error("getPublicUrl error", urlErr);
+      if (urlErr) console.error('getPublicUrl error', urlErr);
       else setPublicUrl(urlData.publicUrl);
     } catch (e: any) {
       console.error(e);
-      setError(e.message || "Failed to load PDF.");
+      setError(e.message || 'Failed to load PDF.');
     } finally {
       setLoading(false);
     }
@@ -112,37 +94,20 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
 
   useEffect(() => {
     if (!pdfId) {
-      setError("No PDF ID provided.");
+      setError('No PDF ID provided.');
       setLoading(false);
     } else {
       fetchPdfDetail();
     }
   }, [pdfId, fetchPdfDetail]);
 
-  const [courseId, setCourseId] = useState<string | null>(null);
-
-  const fetchCourse = useCallback(async () => {
-    const res = await fetch(`/api/check-course/${pdfId}`);
-    if (res.ok) {
-      const { courseId } = await res.json();
-      setCourseId(courseId);
-    }
-  }, [pdfId]);
-
-  useEffect(() => {
-    if (pdfId) {
-      fetchPdfDetail();
-      fetchCourse(); // <— sprawdź istnienie kursu
-    }
-  }, [pdfId, fetchPdfDetail, fetchCourse]);
-
   const handleProcess = async () => {
     setProcessing(true);
     setError(null);
     try {
-      const res = await fetch("/api/pdf-process", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/pdf-process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ document_id: pdfId }),
       });
       if (!res.ok) {
@@ -153,7 +118,7 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
       await fetchPdfDetail();
     } catch (e: any) {
       console.error(e);
-      setError(e.message || "Failed to process PDF.");
+      setError(e.message || 'Failed to process PDF.');
     } finally {
       setProcessing(false);
     }
@@ -163,7 +128,7 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
     setLoadingTopics(true);
     setTopicsError(null);
     try {
-      // This is a placeholder - replace with your actual API endpoint
+      // Using GET request with the ID in the URL path
       const res = await fetch(`/api/pdf-topics/${pdfId}`);
       if (!res.ok) {
         const payload = await res.json().catch(() => ({}));
@@ -174,33 +139,24 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
       setShowTopics(true);
     } catch (e: any) {
       console.error(e);
-      setTopicsError(e.message || "Failed to load topics.");
+      setTopicsError(e.message || 'Failed to load topics.');
     } finally {
       setLoadingTopics(false);
     }
   };
 
   const toggleTopic = (topic: string) => {
-    setSelectedTopics((prev) =>
-      prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]
+    setSelectedTopics(prev => 
+      prev.includes(topic)
+        ? prev.filter(t => t !== topic)
+        : [...prev, topic]
     );
   };
 
-  const handleTopicsNext = async () => {
-    // wywołaj endpoint z document_id i selectedTopics
-    const res = await fetch("/api/generate-course", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        document_id: pdfId,
-        topics: selectedTopics,
-      }),
-    });
-    const { course_id } = await res.json();
-    // przekieruj użytkownika do strony kursu:
-    if (course_id) {
-      window.location.href = `/sections/${course_id}`;
-    }
+  const handleTopicsNext = () => {
+    // TODO: Handle the selected topics (e.g., save them or navigate to pomodoro planning)
+    console.log('Selected topics:', selectedTopics);
+    // You could also pass these topics to the next step or save them to your backend
   };
 
   if (loading) {
@@ -260,10 +216,7 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
             href="/pdf"
             className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-700 mb-4 group"
           >
-            <ArrowLeft
-              size={18}
-              className="mr-1 transition-transform group-hover:-translate-x-1"
-            />
+            <ArrowLeft size={18} className="mr-1 transition-transform group-hover:-translate-x-1" />
             Back to PDF List
           </Link>
           <div className="flex items-center space-x-3 mb-2">
@@ -271,9 +224,7 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
             <h1 className="text-3xl font-bold text-slate-800">{title}</h1>
           </div>
           {pdf.title && pdf.filename !== pdf.title && (
-            <p className="text-sm text-slate-500">
-              Original Filename: {pdf.filename}
-            </p>
+            <p className="text-sm text-slate-500">Original Filename: {pdf.filename}</p>
           )}
         </header>
 
@@ -285,27 +236,10 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
             label="Uploaded At"
             value={new Date(pdf.uploaded_at).toLocaleString()}
           />
-          <DetailItem
-            icon={CheckCircle}
-            label="Processed"
-            isBoolean
-            booleanValue={pdf.processed}
-          />
-          <DetailItem
-            icon={BookOpen}
-            label="Pages"
-            value={formatNumber(pdf.page_count)}
-          />
-          <DetailItem
-            icon={Type}
-            label="Words"
-            value={formatNumber(pdf.word_count)}
-          />
-          <DetailItem
-            icon={Hash}
-            label="Chars"
-            value={formatNumber(pdf.char_count)}
-          />
+          <DetailItem icon={CheckCircle} label="Processed" isBoolean booleanValue={pdf.processed} />
+          <DetailItem icon={BookOpen} label="Pages" value={formatNumber(pdf.page_count)} />
+          <DetailItem icon={Type} label="Words" value={formatNumber(pdf.word_count)} />
+          <DetailItem icon={Hash} label="Chars" value={formatNumber(pdf.char_count)} />
         </div>
 
         {showTopics ? (
@@ -317,25 +251,17 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
           >
             <div className="flex items-center mb-4">
               <List className="w-6 h-6 text-indigo-500 mr-2" />
-              <h2 className="text-2xl font-semibold text-slate-800">
-                Extract Topics
-              </h2>
+              <h2 className="text-2xl font-semibold text-slate-800">Extract Topics</h2>
             </div>
-
+            
             {loadingTopics ? (
               <div className="flex flex-col items-center justify-center py-8">
-                <LoaderCircle
-                  size={36}
-                  className="mb-4 animate-spin text-indigo-500"
-                />
+                <LoaderCircle size={36} className="mb-4 animate-spin text-indigo-500" />
                 <p className="text-slate-600">Loading topics...</p>
               </div>
             ) : topicsError ? (
               <div className="text-center py-6">
-                <AlertTriangle
-                  size={36}
-                  className="mx-auto mb-4 text-red-600"
-                />
+                <AlertTriangle size={36} className="mx-auto mb-4 text-red-600" />
                 <p className="text-red-600 mb-4">{topicsError}</p>
                 <button
                   onClick={() => fetchTopics()}
@@ -346,9 +272,7 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
               </div>
             ) : (
               <>
-                <p className="mb-4 text-slate-600">
-                  Select topics you'd like to include in your pomodoro plan:
-                </p>
+                <p className="mb-4 text-slate-600">Select topics you'd like to include in your pomodoro plan:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6">
                   {topics.map((topic, index) => (
                     <motion.button
@@ -359,8 +283,8 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
                       onClick={() => toggleTopic(topic)}
                       className={`p-3 rounded-lg border-2 text-left ${
                         selectedTopics.includes(topic)
-                          ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                          : "border-slate-200 hover:border-indigo-300 text-slate-700"
+                          ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                          : 'border-slate-200 hover:border-indigo-300 text-slate-700'
                       }`}
                     >
                       {topic}
@@ -379,7 +303,7 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
                     disabled={selectedTopics.length === 0}
                     className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors text-sm font-medium"
                   >
-                    {selectedTopics.length === 0 ? "Select Topics" : "Continue"}
+                    {selectedTopics.length === 0 ? 'Select Topics' : 'Continue'}
                   </button>
                 </div>
               </>
@@ -397,7 +321,7 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
                 Download
               </a>
             )}
-
+            
             {/* Only show Process button if PDF is not processed */}
             {!pdf.processed && (
               <button
@@ -405,17 +329,11 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
                 disabled={processing}
                 className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors text-sm font-medium cursor-pointer"
               >
-                {processing ? (
-                  <Loader size={20} className="mr-2 animate-spin" />
-                ) : (
-                  <span className="mr-2">⚙️</span>
-                )}
-                {processing ? "Processing…" : "Process"}
+                {processing ? <Loader size={20} className="mr-2 animate-spin" /> : <span className="mr-2">⚙️</span>}
+                {processing ? 'Processing…' : 'Process'}
               </button>
             )}
-
-           
-
+            
             {/* Extract Topics button - only shown if PDF is processed */}
             {pdf.processed && (
               <button
@@ -424,26 +342,11 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
                 className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors text-sm font-medium cursor-pointer"
               >
                 {loadingTopics ? (
-                  <>
-                    <Loader size={20} className="mr-2 animate-spin" />
-                    Loading Topics...
-                  </>
+                  <><Loader size={20} className="mr-2 animate-spin" />Loading Topics...</>
                 ) : (
-                  <>
-                    <List size={20} className="mr-2" />
-                    Extract Topics
-                  </>
+                  <><List size={20} className="mr-2" />Extract Topics</>
                 )}
               </button>
-            )}
-             {courseId && (
-              <Link
-                   href={`/sections/${courseId}`}
-                   className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium cursor-pointer"
-                 >
-                   <ArrowLeft size={20} className="mr-2 rotate-180" />
-                   Przejdź do kursu
-                 </Link>
             )}
           </div>
         )}
