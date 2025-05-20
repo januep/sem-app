@@ -34,7 +34,9 @@ Generate a Markdown course based on these selected topics:
 ${JSON.stringify(topics, null, 2)}
 
 Use the text below as your source material—organize one section per topic,
-include headings, brief explanations, all in Markdown.  
+include headings, long explanations, all in Markdown using all of Markdown goodies.
+
+try to use the single hash # only once.
 
 Source text:
 ${chunks.map(c => c.text).join('\n\n').slice(0, 20000)}

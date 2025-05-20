@@ -40,6 +40,12 @@ const components: Components = {
       {children}
     </motion.h2>
   ),
+  h3: ({ children, ...props }) => (
+    <motion.h2 variants={itemVariants}
+      className="text-xl md:text-2xl font-bold text-blue-700 mt-10 mb-4" {...props}>
+      {children}
+    </motion.h2>
+  ),
   p: ({ children, ...props }) => (
     <motion.p variants={itemVariants}
       className="text-gray-700 leading-relaxed my-4" {...props}>
@@ -150,7 +156,7 @@ export default function MarkdownSectionClient({ title, markdown }: Props) {
     <div className="max-w-6xl mx-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
       <motion.div initial="hidden" animate="show" variants={containerVariants}
         className="prose prose-slate lg:prose-xl max-w-none">
-        <h1 className="mb-8">{title}</h1>
+        {/* <h1 className="mb-8">{title}</h1> */}
         <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
           {markdown}
         </ReactMarkdown>

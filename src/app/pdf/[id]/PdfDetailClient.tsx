@@ -414,10 +414,9 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
               </button>
             )}
 
-           
 
             {/* Extract Topics button - only shown if PDF is processed */}
-            {pdf.processed && (
+            {(pdf.processed && !courseId) && (
               <button
                 onClick={fetchTopics}
                 disabled={loadingTopics}
