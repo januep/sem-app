@@ -1,18 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fira_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import Header from "./Header";
 import Background from "./components/Background";
+import { Toaster } from "react-hot-toast";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// Import Fira Sans as the primary font
+// const firaSans = Fira_Sans({
+//   subsets: ["latin"],
+//   weight: ["400", "500", "600", "700"],
+//   variable: "--font-sans",
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
   subsets: ["latin"],
+  weight: ["100","200","300","400","500","600","700","800","900"],
+  variable: "--font-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -27,14 +32,16 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen relative flex flex-col`}
-      >
+    <html lang="en" 
+    // className={firaSans.variable} 
+    className={inter.variable}
+    suppressHydrationWarning>
+      <body className="font-sans antialiased min-h-screen relative flex flex-col">
         {/* Background component is rendered first so it sits behind everything */}
         <Background />
         <Providers>
           <Header />
+          <Toaster position="bottom-right" toastOptions={{ duration: 4000 }} />
           <main className="flex-1 pt-16">
             {children}
           </main>

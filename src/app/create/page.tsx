@@ -19,7 +19,7 @@ export default function ChooseDataset() {
 
   const handleOptionSelect = (option: string) => {
     if (option === 'existing') {
-      router.push('/datasets/existing')
+      router.push('/create/upload')
     } else if (option === 'upload') {
       router.push('/create/pdf')
     } else if (option === 'prompt') {
@@ -70,7 +70,7 @@ export default function ChooseDataset() {
             </div>
             <div className="p-6">
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                Skorzystaj z istniejącego zbioru danych
+                Utworz potężny kurs, który zniszczy każdego.
               </h3>
               <p className="text-gray-600 mb-4">
                 Wybierz spośród naszej biblioteki wstępnie przetworzonych materiałów edukacyjnych przygotowanych do interaktywnej nauki.
