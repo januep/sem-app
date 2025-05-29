@@ -1,4 +1,3 @@
-//app/pdf/[id]/PdfDetailClient.tsx
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
@@ -19,11 +18,14 @@ import {
   XCircle,
   ArrowLeft,
   Download,
-  Loader,
-  List,
+  FileTextIcon,
 } from "lucide-react";
 import { supabaseAnonKey } from "@/app/lib/supabaseClient";
 import { Database } from "@/app/lib/database.types";
+import ProcessButton from "./ProcessButton";
+import GenerateSummariesButton from "./GenerateSummariesButton";
+import GenerateGlobalSummaryButton from "./GenerateGlobalSummaryButton";
+import GenerateChunksButton from "./GenerateChunksButton";
 
 type PdfDocument = Database["public"]["Tables"]["pdf_documents"]["Row"];
 
@@ -73,17 +75,34 @@ const DetailItem: React.FC<{
   </motion.div>
 );
 
+const SummarySection: React.FC<{ summary: string }> = ({ summary }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0.2 }}
+    className="mt-8 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden"
+  >
+    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+      <div className="flex items-center space-x-3">
+        <FileTextIcon className="w-6 h-6 text-white" />
+        <h2 className="text-xl font-semibold text-white">Document Summary</h2>
+      </div>
+    </div>
+    <div className="p-6">
+      <div className="prose prose-slate max-w-none">
+        <p className="text-lg leading-relaxed text-slate-700 font-medium">
+          {summary}
+        </p>
+      </div>
+    </div>
+  </motion.div>
+);
+
 export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
   const [pdf, setPdf] = useState<PdfDocument | null>(null);
   const [publicUrl, setPublicUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showTopics, setShowTopics] = useState(false);
-  const [topics, setTopics] = useState<string[]>([]);
-  const [loadingTopics, setLoadingTopics] = useState(false);
-  const [topicsError, setTopicsError] = useState<string | null>(null);
-  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
 
   const fetchPdfDetail = useCallback(async () => {
     setLoading(true);
@@ -118,90 +137,6 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
       fetchPdfDetail();
     }
   }, [pdfId, fetchPdfDetail]);
-
-  const [courseId, setCourseId] = useState<string | null>(null);
-
-  const fetchCourse = useCallback(async () => {
-    const res = await fetch(`/api/check-course/${pdfId}`);
-    if (res.ok) {
-      const { courseId } = await res.json();
-      setCourseId(courseId);
-    }
-  }, [pdfId]);
-
-  useEffect(() => {
-    if (pdfId) {
-      fetchPdfDetail();
-      fetchCourse(); // <— sprawdź istnienie kursu
-    }
-  }, [pdfId, fetchPdfDetail, fetchCourse]);
-
-  const handleProcess = async () => {
-    setProcessing(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/pdf-process", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ document_id: pdfId }),
-      });
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || res.statusText);
-      }
-      // re-fetch metadata
-      await fetchPdfDetail();
-    } catch (e: any) {
-      console.error(e);
-      setError(e.message || "Failed to process PDF.");
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const fetchTopics = async () => {
-    setLoadingTopics(true);
-    setTopicsError(null);
-    try {
-      // This is a placeholder - replace with your actual API endpoint
-      const res = await fetch(`/api/pdf-topics/${pdfId}`);
-      if (!res.ok) {
-        const payload = await res.json().catch(() => ({}));
-        throw new Error(payload.error || res.statusText);
-      }
-      const data = await res.json();
-      setTopics(data.topics || []);
-      setShowTopics(true);
-    } catch (e: any) {
-      console.error(e);
-      setTopicsError(e.message || "Failed to load topics.");
-    } finally {
-      setLoadingTopics(false);
-    }
-  };
-
-  const toggleTopic = (topic: string) => {
-    setSelectedTopics((prev) =>
-      prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]
-    );
-  };
-
-  const handleTopicsNext = async () => {
-    // wywołaj endpoint z document_id i selectedTopics
-    const res = await fetch("/api/generate-course", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        document_id: pdfId,
-        topics: selectedTopics,
-      }),
-    });
-    const { course_id } = await res.json();
-    // przekieruj użytkownika do strony kursu:
-    if (course_id) {
-      window.location.href = `/sections/${course_id}`;
-    }
-  };
 
   if (loading) {
     return (
@@ -306,146 +241,37 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
             label="Chars"
             value={formatNumber(pdf.char_count)}
           />
+          <DetailItem
+            icon={CheckCircle}
+            label="Generated Summaries"
+            isBoolean
+            booleanValue={pdf.generated_summaries}
+          />
         </div>
 
-        {showTopics ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white rounded-lg shadow-md p-6 mb-8"
-          >
-            <div className="flex items-center mb-4">
-              <List className="w-6 h-6 text-indigo-500 mr-2" />
-              <h2 className="text-2xl font-semibold text-slate-800">
-                Extract Topics
-              </h2>
-            </div>
+        <div className="flex gap-4 mb-8">
+          {publicUrl && (
+            <a
+              href={publicUrl}
+              download={pdf.filename}
+              className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium cursor-pointer"
+            >
+              <Download size={20} className="mr-2" />
+              Download
+            </a>
+          )}
 
-            {loadingTopics ? (
-              <div className="flex flex-col items-center justify-center py-8">
-                <LoaderCircle
-                  size={36}
-                  className="mb-4 animate-spin text-indigo-500"
-                />
-                <p className="text-slate-600">Loading topics...</p>
-              </div>
-            ) : topicsError ? (
-              <div className="text-center py-6">
-                <AlertTriangle
-                  size={36}
-                  className="mx-auto mb-4 text-red-600"
-                />
-                <p className="text-red-600 mb-4">{topicsError}</p>
-                <button
-                  onClick={() => fetchTopics()}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
-                >
-                  Try Again
-                </button>
-              </div>
-            ) : (
-              <>
-                <p className="mb-4 text-slate-600">
-                  Select topics you'd like to include in your pomodoro plan:
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-                  {topics.map((topic, index) => (
-                    <motion.button
-                      key={index}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.05 }}
-                      onClick={() => toggleTopic(topic)}
-                      className={`p-3 rounded-lg border-2 text-left ${
-                        selectedTopics.includes(topic)
-                          ? "border-indigo-500 bg-indigo-50 text-indigo-700"
-                          : "border-slate-200 hover:border-indigo-300 text-slate-700"
-                      }`}
-                    >
-                      {topic}
-                    </motion.button>
-                  ))}
-                </div>
-                <div className="flex justify-between">
-                  <button
-                    onClick={() => setShowTopics(false)}
-                    className="px-6 py-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors text-sm font-medium"
-                  >
-                    Back
-                  </button>
-                  <button
-                    onClick={handleTopicsNext}
-                    disabled={selectedTopics.length === 0}
-                    className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors text-sm font-medium"
-                  >
-                    {selectedTopics.length === 0 ? "Select Topics" : "Continue"}
-                  </button>
-                </div>
-              </>
-            )}
-          </motion.div>
-        ) : (
-          <div className="flex gap-4 mb-8">
-            {publicUrl && (
-              <a
-                href={publicUrl}
-                download={pdf.filename}
-                className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium cursor-pointer"
-              >
-                <Download size={20} className="mr-2" />
-                Download
-              </a>
-            )}
+          {!pdf.processed && <ProcessButton pdfId={pdfId} />}
+          {!pdf.generated_summaries && (
+            <GenerateSummariesButton pdfId={pdfId} />
+          )}
 
-            {/* Only show Process button if PDF is not processed */}
-            {!pdf.processed && (
-              <button
-                onClick={handleProcess}
-                disabled={processing}
-                className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors text-sm font-medium cursor-pointer"
-              >
-                {processing ? (
-                  <Loader size={20} className="mr-2 animate-spin" />
-                ) : (
-                  <span className="mr-2">⚙️</span>
-                )}
-                {processing ? "Processing…" : "Process"}
-              </button>
-            )}
+          {!pdf.summary && <GenerateGlobalSummaryButton pdfId={pdfId} />}
 
+          {pdf.processed && <GenerateChunksButton pdfId={pdfId} />}
+        </div>
 
-            {/* Extract Topics button - only shown if PDF is processed */}
-            {(pdf.processed && !courseId) && (
-              <button
-                onClick={fetchTopics}
-                disabled={loadingTopics}
-                className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors text-sm font-medium cursor-pointer"
-              >
-                {loadingTopics ? (
-                  <>
-                    <Loader size={20} className="mr-2 animate-spin" />
-                    Loading Topics...
-                  </>
-                ) : (
-                  <>
-                    <List size={20} className="mr-2" />
-                    Extract Topics
-                  </>
-                )}
-              </button>
-            )}
-             {courseId && (
-              <Link
-                   href={`/sections/${courseId}`}
-                   className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium cursor-pointer"
-                 >
-                   <ArrowLeft size={20} className="mr-2 rotate-180" />
-                   Przejdź do kursu
-                 </Link>
-            )}
-          </div>
-        )}
+        {pdf.summary && <SummarySection summary={pdf.summary} />}
       </motion.div>
     </div>
   );

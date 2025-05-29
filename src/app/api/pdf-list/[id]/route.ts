@@ -16,8 +16,7 @@ export async function GET(
   const { data: pdf, error } = await supabaseAnonKey
     .from<Database['public']['Tables']['pdf_documents']['Row']>('pdf_documents')
     .select(`
-      id, filename, uploaded_at, page_count, title, author,
-      subject, word_count, char_count, processed, path
+      *
     `)
     .eq('id', id)
     .single()

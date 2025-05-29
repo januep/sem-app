@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import Header from "./Header";
 import Background from "./components/Background";
+import { Toaster } from "react-hot-toast";
 
 // Import Fira Sans as the primary font
 // const firaSans = Fira_Sans({
@@ -40,6 +41,7 @@ export default function RootLayout({
         <Background />
         <Providers>
           <Header />
+          <Toaster position="bottom-right" toastOptions={{ duration: 4000 }} />
           <main className="flex-1 pt-16">
             {children}
           </main>

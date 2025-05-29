@@ -21,9 +21,11 @@ export interface Database {
           title: string | null;
           author: string | null;
           subject: string | null;
+          summary: string | null;
           word_count: number | null;
           char_count: number | null;
           processed: boolean;
+          generated_summaries: boolean;
         };
         Insert: {
           id?: string;
@@ -34,9 +36,11 @@ export interface Database {
           title?: string | null;
           author?: string | null;
           subject?: string | null;
+          summary?: string | null;
           word_count?: number | null;
           char_count?: number | null;
           processed?: boolean;
+          generated_summaries?: boolean;
         };
         Update: {
           id?: string;
@@ -47,9 +51,11 @@ export interface Database {
           title?: string | null;
           author?: string | null;
           subject?: string | null;
+          summary?: string | null;
           word_count?: number | null;
           char_count?: number | null;
           processed?: boolean;
+          generated_summaries?: boolean;
         };
       };
       pdf_chunks: {
