@@ -26,6 +26,7 @@ import ProcessButton from "./ProcessButton";
 import GenerateSummariesButton from "./GenerateSummariesButton";
 import GenerateGlobalSummaryButton from "./GenerateGlobalSummaryButton";
 import GenerateChunksButton from "./GenerateChunksButton";
+import { redirect } from "next/dist/server/api-utils";
 
 type PdfDocument = Database["public"]["Tables"]["pdf_documents"]["Row"];
 
@@ -269,9 +270,16 @@ export default function PdfDetailClient({ pdfId }: PdfDetailClientProps) {
           {!pdf.summary && <GenerateGlobalSummaryButton pdfId={pdfId} />}
 
           {pdf.processed && <GenerateChunksButton pdfId={pdfId} />}
+        <Link
+          href={`/learn/${pdfId}`}
+          className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors text-sm font-medium"
+        >
+          🎓 Learn 
+        </Link>
         </div>
 
         {pdf.summary && <SummarySection summary={pdf.summary} />}
+
       </motion.div>
     </div>
   );

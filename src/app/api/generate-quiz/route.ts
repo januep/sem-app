@@ -112,6 +112,7 @@ export async function POST(request: Request) {
       
       Generate a quiz based on the user's prompt. Respond with ONLY a valid JSON object that matches the Quiz interface. 
       DO NOT include any explanations, comments, or markdown formatting in your response.
+      Use Fill In The Blanks question carefully and rarely, as often users know the right answer, but if they use synonym, they fail.
     `;
 
     const response = await openai.chat.completions.create({
