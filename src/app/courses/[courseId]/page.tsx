@@ -78,7 +78,7 @@ const AnswersModal: React.FC<{
       case 'MAMCQ': {
         const mamcqQuestion = question as MAMCQQuestion;
         const userAnswerArray = Array.isArray(userAnswer) ? userAnswer : [];
-        
+
         return (
           <div className="space-y-4">
             <div className="space-y-2">
@@ -87,10 +87,10 @@ const AnswersModal: React.FC<{
                 {mamcqQuestion.options.map((option, idx) => {
                   const isUserSelected = userAnswerArray.includes(option);
                   const isCorrect = mamcqQuestion.correctAnswers.includes(option);
-                  
+
                   let styling = 'bg-gray-50 border-gray-200 text-gray-600';
                   let icon = null;
-                  
+
                   if (isUserSelected && isCorrect) {
                     styling = 'bg-green-50 border-green-200 text-green-800';
                     icon = <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>;
@@ -101,7 +101,7 @@ const AnswersModal: React.FC<{
                     styling = 'bg-orange-50 border-orange-200 text-orange-800';
                     icon = <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
                   }
-                  
+
                   return (
                     <div key={idx} className={`p-3 rounded-lg border-2 ${styling}`}>
                       <div className="flex items-center gap-2">
@@ -129,7 +129,7 @@ const AnswersModal: React.FC<{
       case 'SAMCQ': {
         const samcqQuestion = question as SAMCQQuestion;
         const userSelectedOption = typeof userAnswer === 'string' ? userAnswer : '';
-        
+
         return (
           <div className="space-y-4">
             <div className="space-y-2">
@@ -138,10 +138,10 @@ const AnswersModal: React.FC<{
                 {samcqQuestion.options.map((option, idx) => {
                   const isUserSelected = userSelectedOption === option;
                   const isCorrect = option === samcqQuestion.correctAnswer;
-                  
+
                   let styling = 'bg-gray-50 border-gray-200 text-gray-600';
                   let icon = null;
-                  
+
                   if (isCorrect) {
                     styling = 'bg-green-50 border-green-200 text-green-800';
                     icon = <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>;
@@ -149,7 +149,7 @@ const AnswersModal: React.FC<{
                     styling = 'bg-red-50 border-red-200 text-red-800';
                     icon = <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>;
                   }
-                  
+
                   return (
                     <div key={idx} className={`p-3 rounded-lg border-2 ${styling}`}>
                       <div className="flex items-center gap-2">
@@ -179,16 +179,15 @@ const AnswersModal: React.FC<{
         const userText = typeof userAnswer === 'string' ? userAnswer : '';
         const correctAnswer = fillBlanksQuestion.answers[0];
         const isCorrect = userText.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
-        
+
         return (
           <div className="space-y-4">
             <div>
               <h5 className="text-sm font-medium text-gray-700 mb-2">Your Answer:</h5>
-              <div className={`p-4 rounded-lg border-2 ${
-                isCorrect 
-                  ? 'bg-green-50 border-green-200' 
+              <div className={`p-4 rounded-lg border-2 ${isCorrect
+                  ? 'bg-green-50 border-green-200'
                   : 'bg-red-50 border-red-200'
-              }`}>
+                }`}>
                 <div className="flex items-center gap-2">
                   {isCorrect ? (
                     <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -199,15 +198,14 @@ const AnswersModal: React.FC<{
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   )}
-                  <span className={`font-medium text-lg ${
-                    isCorrect ? 'text-green-800' : 'text-red-800'
-                  }`}>
+                  <span className={`font-medium text-lg ${isCorrect ? 'text-green-800' : 'text-red-800'
+                    }`}>
                     "{userText || '(no answer provided)'}"
                   </span>
                 </div>
               </div>
             </div>
-            
+
             {!isCorrect && (
               <div>
                 <h5 className="text-sm font-medium text-gray-700 mb-2">Correct Answer:</h5>
@@ -227,7 +225,7 @@ const AnswersModal: React.FC<{
       case 'TrueFalse': {
         const trueFalseQuestion = question as TrueFalseQuestion;
         const userBoolAnswer = typeof userAnswer === 'boolean' ? userAnswer : null;
-        
+
         return (
           <div className="space-y-4">
             <div className="space-y-2">
@@ -237,10 +235,10 @@ const AnswersModal: React.FC<{
                   const isUserSelected = userBoolAnswer === option;
                   const isCorrect = option === trueFalseQuestion.correctAnswer;
                   const label = option ? 'True' : 'False';
-                  
+
                   let styling = 'bg-gray-50 border-gray-200 text-gray-600';
                   let icon = null;
-                  
+
                   if (isCorrect) {
                     styling = 'bg-green-50 border-green-200 text-green-800';
                     icon = <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>;
@@ -248,7 +246,7 @@ const AnswersModal: React.FC<{
                     styling = 'bg-red-50 border-red-200 text-red-800';
                     icon = <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>;
                   }
-                  
+
                   return (
                     <div key={label} className={`p-3 rounded-lg border-2 ${styling}`}>
                       <div className="flex items-center gap-2">
@@ -276,7 +274,7 @@ const AnswersModal: React.FC<{
       case 'Matching': {
         const matchingQuestion = question as MatchingQuestion;
         const userMatchAnswer = typeof userAnswer === 'object' && !Array.isArray(userAnswer) && userAnswer !== null ? userAnswer : {};
-        
+
         return (
           <div className="space-y-4">
             <div>
@@ -286,17 +284,16 @@ const AnswersModal: React.FC<{
                   const userMatch = userMatchAnswer[idx];
                   const correctMatch = pair.definition;
                   const isCorrect = userMatch === correctMatch;
-                  
+
                   return (
                     <div key={idx} className="border border-gray-200 rounded-lg p-4 bg-white">
                       <div className="font-medium text-gray-900 mb-2">{pair.term}</div>
-                      
+
                       <div className="space-y-2">
-                        <div className={`p-3 rounded-lg border-2 ${
-                          isCorrect 
+                        <div className={`p-3 rounded-lg border-2 ${isCorrect
                             ? 'bg-green-50 border-green-200 text-green-800'
                             : 'bg-red-50 border-red-200 text-red-800'
-                        }`}>
+                          }`}>
                           <div className="flex items-center gap-2">
                             {isCorrect ? (
                               <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -313,7 +310,7 @@ const AnswersModal: React.FC<{
                             </div>
                           </div>
                         </div>
-                        
+
                         {!isCorrect && (
                           <div className="bg-green-50 border-2 border-green-200 rounded-lg p-3">
                             <div className="flex items-center gap-2 text-green-800">
@@ -394,11 +391,10 @@ const AnswersModal: React.FC<{
                         <span className="text-sm font-medium text-gray-500">
                           Question {index + 1}
                         </span>
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                          status === 'correct'
+                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${status === 'correct'
                             ? 'bg-green-100 text-green-800'
                             : 'bg-red-100 text-red-800'
-                        }`}>
+                          }`}>
                           {status === 'correct' ? (
                             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -414,14 +410,14 @@ const AnswersModal: React.FC<{
                           {question.type === 'MAMCQ'
                             ? 'Multiple Answers'
                             : question.type === 'SAMCQ'
-                            ? 'Single Answer'
-                            : question.type === 'TrueFalse'
-                            ? 'True or False'
-                            : question.type === 'FillBlanks'
-                            ? 'Fill in the Blanks'
-                            : question.type === 'Matching'
-                            ? 'Matching'
-                            : 'Quiz Question'}
+                              ? 'Single Answer'
+                              : question.type === 'TrueFalse'
+                                ? 'True or False'
+                                : question.type === 'FillBlanks'
+                                  ? 'Fill in the Blanks'
+                                  : question.type === 'Matching'
+                                    ? 'Matching'
+                                    : 'Quiz Question'}
                         </span>
                       </div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-4">
@@ -656,7 +652,7 @@ const CoursePage: React.FC = () => {
           </svg>
           <h3 className="text-xl font-bold text-gray-800 mb-2">Quiz Not Available</h3>
           <p className="text-gray-600">{error || "We couldn't load the quiz. Please try refreshing the page."}</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors cursor-pointer"
           >
@@ -676,7 +672,7 @@ const CoursePage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4 max-w-4xl">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -687,7 +683,7 @@ const CoursePage: React.FC = () => {
 
         <AnimatePresence mode="wait">
           {!isFinished && currentQuestion ? (
-            <motion.div 
+            <motion.div
               key="quiz-questions"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -721,14 +717,14 @@ const CoursePage: React.FC = () => {
                   {currentQuestion.type === 'MAMCQ'
                     ? 'Multiple Answers'
                     : currentQuestion.type === 'SAMCQ'
-                    ? 'Single Answer'
-                    : currentQuestion.type === 'TrueFalse'
-                    ? 'True or False'
-                    : currentQuestion.type === 'FillBlanks'
-                    ? 'Fill in the Blanks'
-                    : currentQuestion.type === 'Matching'
-                    ? 'Matching'
-                    : 'Quiz Question'}
+                      ? 'Single Answer'
+                      : currentQuestion.type === 'TrueFalse'
+                        ? 'True or False'
+                        : currentQuestion.type === 'FillBlanks'
+                          ? 'Fill in the Blanks'
+                          : currentQuestion.type === 'Matching'
+                            ? 'Matching'
+                            : 'Quiz Question'}
                 </span>
               </div>
 
@@ -760,18 +756,18 @@ const CoursePage: React.FC = () => {
                   <div className="relative w-40 h-40">
                     {/* Circular progress bar */}
                     <svg className="w-full h-full" viewBox="0 0 100 100">
-                      <circle 
-                        className="text-gray-100" 
-                        strokeWidth="10" 
-                        stroke="currentColor" 
-                        fill="transparent" 
-                        r="40" 
-                        cx="50" 
-                        cy="50" 
+                      <circle
+                        className="text-gray-100"
+                        strokeWidth="10"
+                        stroke="currentColor"
+                        fill="transparent"
+                        r="40"
+                        cx="50"
+                        cy="50"
                       />
-                      <circle 
-                        className="text-blue-600" 
-                        strokeWidth="10" 
+                      <circle
+                        className="text-blue-600"
+                        strokeWidth="10"
                         strokeDasharray={251.2}
                         strokeDashoffset={251.2 - (scorePercentage / 100 * 251.2)}
                         strokeLinecap="round"
@@ -807,7 +803,7 @@ const CoursePage: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex flex-wrap justify-center gap-4 mt-8">
-                  <button 
+                  <button
                     onClick={() => setShowAnswersModal(true)}
                     className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2 cursor-pointer"
                   >
@@ -816,7 +812,7 @@ const CoursePage: React.FC = () => {
                     </svg>
                     View Answers
                   </button>
-                  <button 
+                  <button
                     onClick={() => {
                       setAnswers([]);
                       setCurrentIndex(0);
@@ -826,11 +822,11 @@ const CoursePage: React.FC = () => {
                   >
                     Retry Quiz
                   </button>
-                  <button 
-                    onClick={() => (window.location.href = `/courses`)}
+                  <button
+                    onClick={() => window.history.back()}
                     className="px-6 py-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium rounded-lg shadow-sm transition-colors cursor-pointer"
                   >
-                    Back to Courses
+                    Go Back
                   </button>
                 </div>
               </div>
