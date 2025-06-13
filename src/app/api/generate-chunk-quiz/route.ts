@@ -3,10 +3,12 @@ import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 import { Quiz } from '@/app/types/quiz';
 
+// Inicjalizacja klienta OpenAI z kluczem API
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Inicjalizacja klienta Supabase z uprawnieniami serwisowymi
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -14,8 +16,10 @@ const supabase = createClient(
 
 export async function POST(request: Request) {
   try {
+    // Wyodrębnienie danych z żądania JSON
     const { chunkId, chunkText } = await request.json();
 
+    // Walidacja wymaganych parametrów
     if (!chunkId || !chunkText) {
       return NextResponse.json(
         { error: 'chunkId and chunkText are required' },
@@ -23,7 +27,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify that the chunk exists and get PDF document info
+    // Sprawdzenie czy chunk istnieje w bazie danych i pobranie informacji o dokumencie PDF
     const { data: chunk, error: chunkError } = await supabase
       .from('chunks')
       .select('id, text, pdf_id')
@@ -37,7 +41,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get the PDF document summary for context
+    // Pobranie podsumowania dokumentu PDF dla dodatkowego kontekstu
     const { data: pdfDocument, error: pdfError } = await supabase
       .from('pdf_documents')
       .select('summary, title, filename')
@@ -45,10 +49,11 @@ export async function POST(request: Request) {
       .single();
 
     if (pdfError) {
-      console.error('Error fetching PDF document:', pdfError);
-      // Continue without summary if not available
+      console.error('Błąd podczas pobierania dokumentu PDF:', pdfError);
+      // Kontynuuj bez podsumowania jeśli nie jest dostępne
     }
 
+    // Definicja systemowego promptu dla OpenAI - instrukcje tworzenia quizu
     const systemPrompt = `
       You are an expert quiz creator that creates JSON quiz data adhering to a specific format.
 
@@ -153,7 +158,7 @@ export async function POST(request: Request) {
       DO NOT include any explanations, comments, or markdown formatting in your response.
     `;
 
-    // Construct the user prompt with context about the PDF document
+    // Konstruowanie promptu użytkownika z kontekstem dokumentu PDF
     let userPrompt = '';
     
     if (pdfDocument?.summary) {
@@ -168,7 +173,7 @@ ${chunkText}
 
 Create a quiz with exactly 7 questions based ONLY on the content chunk provided above. The quiz should test understanding of the key concepts presented in this specific section. Use the document context to better understand the subject matter, but focus your questions exclusively on the content chunk.`;
     } else {
-      // Fallback if no summary is available
+      // Fallback w przypadku braku podsumowania
       userPrompt = `CONTEXT: This content chunk is part of a larger educational PDF document.
 
 CONTENT CHUNK TO CREATE QUIZ FROM:
@@ -177,6 +182,7 @@ ${chunkText}
 Create a quiz with exactly 7 questions based ONLY on the content chunk provided above. The quiz should test understanding of the key concepts presented in this specific section.`;
     }
 
+    // Wysłanie żądania do OpenAI w celu wygenerowania quizu
     const response = await openai.chat.completions.create({
       model: 'gpt-4.1',
       messages: [
@@ -187,21 +193,23 @@ Create a quiz with exactly 7 questions based ONLY on the content chunk provided 
       max_tokens: 2500,
     });
 
+    // Wyodrębnienie zawartości odpowiedzi z OpenAI
     const content = response.choices[0]?.message?.content?.trim() || '';
     let quizData: Quiz;
 
+    // Parsowanie odpowiedzi JSON z OpenAI
     try {
       quizData = JSON.parse(content);
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response as JSON:', content);
-      console.error('Parse error:', parseError);
+      console.error('Nie udało się sparsować odpowiedzi OpenAI jako JSON:', content);
+      console.error('Błąd parsowania:', parseError);
       return NextResponse.json(
         { error: 'Failed to generate valid quiz data. Please try again.' },
         { status: 500 }
       );
     }
 
-    // Insert the quiz into Supabase with chunk reference
+    // Wstawienie wygenerowanego quizu do bazy danych Supabase z referencją do chunk'a
     const { data, error: insertError } = await supabase
       .from('quizzes')
       .insert([
@@ -211,20 +219,22 @@ Create a quiz with exactly 7 questions based ONLY on the content chunk provided 
           approximateTime: quizData.approximateTime,
           heroIconName: quizData.heroIconName,
           questions: quizData.questions,
-          chunk_id: chunkId, // Reference to the chunk
+          chunk_id: chunkId, // Referencja do chunk'a z którego powstał quiz
         }
       ])
       .select('id')
       .single();
 
+    // Obsługa błędów zapisu do bazy danych
     if (insertError) {
-      console.error('Error inserting quiz into Supabase:', insertError);
+      console.error('Błąd podczas wstawiania quizu do Supabase:', insertError);
       return NextResponse.json(
         { error: 'Failed to save quiz to database' },
         { status: 500 }
       );
     }
 
+    // Zwrócenie informacji o pomyślnie utworzonym quizie
     return NextResponse.json({
       success: true,
       quizTitle: quizData.quizTitle,
@@ -232,7 +242,8 @@ Create a quiz with exactly 7 questions based ONLY on the content chunk provided 
       chunkId: chunkId,
     });
   } catch (error) {
-    console.error('Error generating chunk quiz:', error);
+    // Obsługa nieoczekiwanych błędów
+    console.error('Błąd podczas generowania quizu z chunk\'a:', error);
     return NextResponse.json(
       { error: 'Failed to generate quiz from chunk' },
       { status: 500 }

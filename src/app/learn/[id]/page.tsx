@@ -13,22 +13,6 @@ import {
   Sparkles
 } from 'lucide-react'
 
-interface Chunk {
-  id: string
-  start_page: number
-  end_page: number
-  order: number
-}
-
-interface Quiz {
-  id: string
-  quizTitle: string
-  description: string
-  approximateTime: number
-  heroIconName: string
-  chunk_id: string
-}
-
 interface PdfDocument {
   id: string
   title: string
@@ -55,13 +39,13 @@ export default async function LearnPage({ params }: { params: { id: string } }) 
   const pdfDoc = doc as PdfDocument
 
   // 2. Pobierz publiczny URL pliku
-  const { data: urlData, error: urlErr } = supabaseAdmin
+  const { data: urlData} = supabaseAdmin
     .storage
     .from('pdfs')
     .getPublicUrl(pdfDoc.path)
   
-  if (urlErr || !urlData) {
-    console.error('Could not get public URL:', urlErr)
+  if ( !urlData) {
+    console.error('Could not get public URL:')
     return <p>Unable to load PDF</p>
   }
   const publicUrl = urlData.publicUrl

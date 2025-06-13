@@ -35,7 +35,7 @@ interface ExistingQuiz {
   description: string;
   approximateTime: number;
   heroIconName: string;
-  questions: any[];
+  questions: unknown[];
   created_at: string;
 }
 
@@ -43,7 +43,7 @@ export default function ChunkQuizPage() {
   const params = useParams();
   const router = useRouter();
   const learnId = params.id as string;
-  const chunkId = params.chunkId as string; // Now this uses the correct parameter name
+  const chunkId = params.chunkId as string;
   
   const [chunk, setChunk] = useState<Chunk | null>(null);
   const [existingQuiz, setExistingQuiz] = useState<ExistingQuiz | null>(null);
@@ -51,33 +51,34 @@ export default function ChunkQuizPage() {
   const [isGeneratingQuiz, setIsGeneratingQuiz] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch chunk data
+  // Pobieranie danych fragmentu
   useEffect(() => {
     const fetchChunk = async () => {
       setIsLoadingChunk(true);
       setError(null);
       
       try {
-        // You'll need to create an API endpoint to fetch chunk by ID
+        // Endpoint API do pobierania fragmentu po ID
         const response = await fetch(`/api/chunks/${chunkId}`);
         
         if (!response.ok) {
-          throw new Error('Failed to fetch chunk data');
+          throw new Error('Nie udało się pobrać danych fragmentu');
         }
         
         const chunkData = await response.json();
         setChunk(chunkData);
         
-        // Check if there's already a quiz for this chunk
+        // Sprawdzenie czy istnieje już quiz dla tego fragmentu
         const quizResponse = await fetch(`/api/quizzes/chunk/${chunkId}`);
         if (quizResponse.ok) {
           const quizData = await quizResponse.json();
           setExistingQuiz(quizData);
         }
         
-      } catch (err) {
-        console.error('Error fetching chunk:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load chunk');
+      } catch (err: unknown) {
+        console.error('Błąd podczas pobierania fragmentu:', err);
+        const errorMessage = err instanceof Error ? err.message : 'Nie udało się załadować fragmentu';
+        setError(errorMessage);
       } finally {
         setIsLoadingChunk(false);
       }
@@ -90,14 +91,14 @@ export default function ChunkQuizPage() {
 
   const handleCreateQuiz = async () => {
     if (!chunk) {
-      toast.error('Chunk data not available');
+      toast.error('Dane fragmentu nie są dostępne');
       return;
     }
 
     setIsGeneratingQuiz(true);
     
     try {
-      toast.loading('Creating quiz from chunk content... This may take a moment.', { id: 'generating-quiz' });
+      toast.loading('Tworzenie quizu z zawartości fragmentu... To może potrwać chwilę.', { id: 'generating-quiz' });
       
       const response = await fetch('/api/generate-chunk-quiz', {
         method: 'POST',
@@ -112,27 +113,25 @@ export default function ChunkQuizPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate quiz');
+        throw new Error(errorData.error || 'Nie udało się wygenerować quizu');
       }
 
       const data = await response.json();
       
-      toast.success(`Quiz "${data.quizTitle}" has been created successfully!`, { 
+      toast.success(`Quiz "${data.quizTitle}" został utworzony pomyślnie!`, { 
         id: 'generating-quiz',
         duration: 3000 
       });
       
-      // Redirect to the quiz after a short delay
+      // Przekierowanie do quizu po krótkiej przerwie
       setTimeout(() => {
         router.push(`/courses/${data.id}`);
       }, 1500);
       
-    } catch (error) {
-      console.error('Error generating quiz:', error);
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to generate quiz', 
-        { id: 'generating-quiz' }
-      );
+    } catch (error: unknown) {
+      console.error('Błąd podczas generowania quizu:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Nie udało się wygenerować quizu';
+      toast.error(errorMessage, { id: 'generating-quiz' });
     } finally {
       setIsGeneratingQuiz(false);
     }
@@ -143,7 +142,7 @@ export default function ChunkQuizPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <Loader className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">Loading chunk content...</p>
+          <p className="text-gray-600 text-lg">Ładowanie zawartości fragmentu...</p>
         </div>
       </div>
     );
@@ -154,14 +153,14 @@ export default function ChunkQuizPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Error Loading Content</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Błąd ładowania zawartości</h1>
           <p className="text-gray-600 mb-6">{error}</p>
           <Link 
             href={`/learn/${learnId}`}
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Learning
+            Powrót do nauki
           </Link>
         </div>
       </div>
@@ -173,8 +172,8 @@ export default function ChunkQuizPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Chunk Not Found</h1>
-          <p className="text-gray-600">The requested content chunk could not be found.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Fragment nie znaleziony</h1>
+          <p className="text-gray-600">Żądany fragment zawartości nie został znaleziony.</p>
         </div>
       </div>
     );
@@ -183,7 +182,7 @@ export default function ChunkQuizPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
+        {/* Nagłówek */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -195,18 +194,18 @@ export default function ChunkQuizPage() {
             className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Learning
+            Powrót do nauki
           </Link>
           
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Content Chunk Quiz
+            Quiz fragmentu zawartości
           </h1>
           <p className="text-gray-600">
-            Create or view quiz content for this learning chunk
+            Utwórz lub zobacz zawartość quizu dla tego fragmentu nauki
           </p>
         </motion.div>
 
-        {/* Chunk Information */}
+        {/* Informacje o fragmencie */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -215,31 +214,31 @@ export default function ChunkQuizPage() {
         >
           <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
             <FileText className="w-5 h-5 mr-2 text-blue-600" />
-            Chunk Information
+            Informacje o fragmencie
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex items-center space-x-2">
               <BookOpen className="w-4 h-4 text-gray-500" />
-              <span className="text-sm text-gray-600">Pages:</span>
+              <span className="text-sm text-gray-600">Strony:</span>
               <span className="font-medium">{chunk.start_page} - {chunk.end_page}</span>
             </div>
             
             <div className="flex items-center space-x-2">
               <Hash className="w-4 h-4 text-gray-500" />
-              <span className="text-sm text-gray-600">Tokens:</span>
-              <span className="font-medium">{chunk.token_count.toLocaleString()}</span>
+              <span className="text-sm text-gray-600">Tokeny:</span>
+              <span className="font-medium">{chunk.token_count.toLocaleString('pl-PL')}</span>
             </div>
             
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">Order:</span>
+              <span className="text-sm text-gray-600">Kolejność:</span>
               <span className="font-medium">#{chunk.order}</span>
             </div>
           </div>
           
-          {/* Text Preview */}
+          {/* Podgląd tekstu */}
           <div className="mt-4">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Content Preview:</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Podgląd zawartości:</h3>
             <div className="bg-gray-50 rounded-lg p-4 max-h-32 overflow-y-auto">
               <p className="text-sm text-gray-700 leading-relaxed">
                 {chunk.text.substring(0, 300)}
@@ -249,7 +248,7 @@ export default function ChunkQuizPage() {
           </div>
         </motion.div>
 
-        {/* Quiz Section */}
+        {/* Sekcja quizu */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -257,11 +256,11 @@ export default function ChunkQuizPage() {
           className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
         >
           {existingQuiz ? (
-            // Show existing quiz
+            // Pokaż istniejący quiz
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                 <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
-                Existing Quiz
+                Istniejący quiz
               </h2>
               
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
@@ -271,11 +270,11 @@ export default function ChunkQuizPage() {
                 <div className="flex flex-wrap gap-4 text-sm text-green-600">
                   <div className="flex items-center">
                     <Clock className="w-4 h-4 mr-1" />
-                    {existingQuiz.approximateTime} minutes
+                    {existingQuiz.approximateTime} minut
                   </div>
                   <div className="flex items-center">
                     <BookOpen className="w-4 h-4 mr-1" />
-                    {existingQuiz.questions.length} questions
+                    {existingQuiz.questions.length} pytań
                   </div>
                 </div>
               </div>
@@ -286,7 +285,7 @@ export default function ChunkQuizPage() {
                   className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                 >
                   <BookOpen className="w-4 h-4 mr-2" />
-                  Take Quiz
+                  Rozpocznij quiz
                 </Link>
                 
                 <button
@@ -299,21 +298,21 @@ export default function ChunkQuizPage() {
                   ) : (
                     <Plus className="w-4 h-4 mr-2" />
                   )}
-                  {isGeneratingQuiz ? 'Regenerating...' : 'Create New Quiz'}
+                  {isGeneratingQuiz ? 'Regenerowanie...' : 'Utwórz nowy quiz'}
                 </button>
               </div>
             </div>
           ) : (
-            // Show create quiz option
+            // Pokaż opcję tworzenia quizu
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                 <Plus className="w-5 h-5 mr-2 text-blue-600" />
-                Create Quiz
+                Utwórz quiz
               </h2>
               
               <p className="text-gray-600 mb-6">
-                Generate an interactive quiz based on this content chunk. The AI will analyze the text 
-                and create relevant questions to test comprehension and retention.
+                Wygeneruj interaktywny quiz na podstawie tego fragmentu zawartości. AI przeanalizuje tekst 
+                i utworzy odpowiednie pytania do sprawdzenia zrozumienia i zapamiętywania.
               </p>
               
               <motion.button
@@ -326,19 +325,19 @@ export default function ChunkQuizPage() {
                 {isGeneratingQuiz ? (
                   <>
                     <Loader className="w-5 h-5 mr-3 animate-spin" />
-                    Creating Quiz...
+                    Tworzenie quizu...
                   </>
                 ) : (
                   <>
                     <Plus className="w-5 h-5 mr-3" />
-                    Create New Quiz
+                    Utwórz nowy quiz
                   </>
                 )}
               </motion.button>
               
               {isGeneratingQuiz && (
                 <div className="mt-4 text-sm text-gray-600">
-                  <p>This may take 30-60 seconds depending on content length.</p>
+                  <p>To może potrwać 30-60 sekund w zależności od długości zawartości.</p>
                 </div>
               )}
             </div>
