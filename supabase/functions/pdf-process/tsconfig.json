@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-      "lib": ["deno.ns", "deno.fetch", "esnext"],
-      "strict": true,
-      "skipLibCheck": true,
-      "noImplicitAny": false
-    }
-  }
-  

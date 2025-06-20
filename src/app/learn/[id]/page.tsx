@@ -2,11 +2,11 @@
 import { supabaseAdmin } from '@/app/lib/supabaseAdmin'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import { 
-  BookOpen, 
-  FileText, 
-  CheckCircle, 
-  Clock, 
+import {
+  BookOpen,
+  FileText,
+  CheckCircle,
+  Clock,
   ArrowRight,
   Play,
   Award,
@@ -21,8 +21,12 @@ interface PdfDocument {
   summary: string
 }
 
-export default async function LearnPage({ params }: { params: { id: string } }) {
-  const pdfId = params.id
+export default async function LearnPage(
+  // params jako Promise<{ id: string }>
+  { params }: { params: Promise<{ id: string }> }
+) {
+  // rozpakowanie id
+  const { id: pdfId } = await params
 
   // 1. Pobierz informacje o PDF
   const { data: doc, error: docErr } = await supabaseAdmin
@@ -30,7 +34,7 @@ export default async function LearnPage({ params }: { params: { id: string } }) 
     .select('path, title, filename, summary')
     .eq('id', pdfId)
     .single()
-  
+
   if (docErr || !doc) {
     console.error('PDF not found:', docErr)
     return notFound()
@@ -39,12 +43,12 @@ export default async function LearnPage({ params }: { params: { id: string } }) 
   const pdfDoc = doc as PdfDocument
 
   // 2. Pobierz publiczny URL pliku
-  const { data: urlData} = supabaseAdmin
+  const { data: urlData } = supabaseAdmin
     .storage
     .from('pdfs')
     .getPublicUrl(pdfDoc.path)
-  
-  if ( !urlData) {
+
+  if (!urlData) {
     console.error('Could not get public URL:')
     return <p>Unable to load PDF</p>
   }
@@ -56,7 +60,7 @@ export default async function LearnPage({ params }: { params: { id: string } }) 
     .select('id, start_page, end_page, order')
     .eq('pdf_id', pdfId)
     .order('order', { ascending: true })
-  
+
   if (chunksErr) {
     console.error('Error fetching chunks:', chunksErr)
     return <p>Unable to load content chunks</p>
@@ -68,14 +72,13 @@ export default async function LearnPage({ params }: { params: { id: string } }) 
     .from('quizzes')
     .select('id, quizTitle, description, approximateTime, heroIconName, chunk_id')
     .in('chunk_id', chunkIds)
-  
+
   if (quizzesErr) {
     console.error('Error fetching quizzes:', quizzesErr)
   }
 
-  // 5. Sprawdź czy istnieje już quiz dla tego PDF - jeśli tak, przekieruj
+  // 5. Jeżeli tylko jeden chunk i jeden quiz — przekieruj
   if (quizzes && quizzes.length === 1 && chunks && chunks.length === 1) {
-    // Jeśli jest tylko jeden chunk i jeden quiz, przekieruj bezpośrednio
     const quiz = quizzes[0]
     redirect(`/courses/${quiz.id}`)
   }

@@ -1,16 +1,14 @@
-// src/app/api/pdf/[id]/route.ts
+// src/app/api/pdf-list/[id]/route.ts
+import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAnonKey } from '@/app/lib/supabaseClient'
 
-import { NextResponse } from 'next/server'
-
-// Handler dla żądań GET - pobieranie szczegółów dokumentu PDF po ID
 export async function GET(
-  _req: Request, 
-  { params }: { params: { id: string } }
-) {
-  // Wyodrębnienie ID dokumentu z parametrów URL
-  const { id } = params
-  
+  _req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  // czekamy na rozpakowanie params
+  const { id } = await context.params
+
   // Walidacja czy ID zostało podane
   if (!id) {
     return NextResponse.json({ error: 'PDF ID is required' }, { status: 400 })
@@ -19,9 +17,7 @@ export async function GET(
   // Pobranie szczegółów dokumentu PDF z bazy danych Supabase
   const { data: pdf, error } = await supabaseAnonKey
     .from('pdf_documents')
-    .select(`
-      *
-    `)
+    .select('*')
     .eq('id', id)
     .single()
 
@@ -33,7 +29,7 @@ export async function GET(
       { status: 500 }
     )
   }
-  
+
   // Sprawdzenie czy dokument został znaleziony
   if (!pdf) {
     return NextResponse.json({ error: 'PDF not found' }, { status: 404 })

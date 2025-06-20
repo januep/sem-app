@@ -4,26 +4,23 @@ import { createClient } from '@supabase/supabase-js'
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  context: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
   try {
-    const pdfId = params.id
+    // await the params promise, then pull out the id
+    const { id: pdfId } = await context.params
 
-    // Validate that pdfId exists
     if (!pdfId) {
       return NextResponse.json({ error: 'PDF ID is required' }, { status: 400 })
     }
 
-    // Check environment variables
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const supabaseUrl = process.env.SUPABASE_URL
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!supabaseUrl || !supabaseKey) {
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
     }
 
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    )
-
+    const supabase = createClient(supabaseUrl, supabaseKey)
     const { data: course, error } = await supabase
       .from('courses')
       .select('id')
@@ -35,10 +32,9 @@ export async function GET(
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    // jeżeli nie ma kursu, course będzie null
-    return NextResponse.json({ courseId: course?.id || null })
-  } catch (error) {
-    console.error('Unexpected error:', error)
+    return NextResponse.json({ courseId: course?.id ?? null })
+  } catch (err) {
+    console.error('Unexpected error:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
