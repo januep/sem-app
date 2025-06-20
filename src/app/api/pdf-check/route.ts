@@ -1,44 +1,56 @@
+
+//api/pdf-check
 import { NextRequest, NextResponse } from 'next/server';
 import { PDFDocument } from 'pdf-lib';
 import pdfParse from 'pdf-parse';
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the FormData from the request
+    // Pobieranie danych formularza z żądania
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
+    // Sprawdzenie czy plik został przesłany i czy jest to plik PDF
     if (!file || !file.name.toLowerCase().endsWith('.pdf')) {
       return NextResponse.json(
-        { error: 'Please provide a valid PDF file' },
+        { error: 'Proszę podać prawidłowy plik PDF' },
         { status: 400 }
       );
     }
 
-    // Convert the file to ArrayBuffer
+    // Sprawdzenie rozmiaru pliku - Supabase Storage ma limit 25MB
+    const maxFileSize = 25 * 1024 * 1024; // 25MB w bajtach
+    if (file.size > maxFileSize) {
+      return NextResponse.json(
+        { error: 'Plik jest za duży. Maksymalny rozmiar to 25MB' },
+        { status: 400 }
+      );
+    }
+
+    // Konwersja pliku na ArrayBuffer do dalszego przetwarzania
     const arrayBuffer = await file.arrayBuffer();
     
-    // Load the PDF document using pdf-lib for metadata
+    // Ładowanie dokumentu PDF przy użyciu pdf-lib w celu wyodrębnienia metadanych
     const pdfDoc = await PDFDocument.load(arrayBuffer);
     
-    // Extract basic metadata
+    // Wyodrębnianie podstawowych metadanych z dokumentu PDF
     const pageCount = pdfDoc.getPageCount();
-    const title = pdfDoc.getTitle() || 'No title';
-    const author = pdfDoc.getAuthor() || 'Unknown author';
-    const subject = pdfDoc.getSubject() || 'No subject';
+    const title = pdfDoc.getTitle() || null;
+    const author = pdfDoc.getAuthor() || null;
+    const subject = pdfDoc.getSubject() || null;
     const creationDate = pdfDoc.getCreationDate();
     const modificationDate = pdfDoc.getModificationDate();
 
-    // Use pdf-parse to extract text for word and character counts
+    // Używanie pdf-parse do wyodrębnienia tekstu w celu policzenia słów i znaków
     const dataBuffer = Buffer.from(arrayBuffer);
     const pdfData = await pdfParse(dataBuffer);
     
-    // Calculate word count and character count
+    // Obliczanie liczby słów i znaków z wyodrębnionego tekstu
     const text = pdfData.text || '';
     const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
     const characterCount = text.length;
 
-    // Create a metadata object
+    // Tworzenie obiektu z metadanymi PDF
     const metadata = {
       filename: file.name,
       fileSize: file.size,
@@ -52,11 +64,15 @@ export async function POST(request: NextRequest) {
       modificationDate: modificationDate ? modificationDate.toISOString() : null,
     };
 
+    // Zwracanie metadanych jako odpowiedź JSON
     return NextResponse.json({ metadata }, { status: 200 });
   } catch (error) {
-    console.error('Error processing PDF:', error);
+    // Logowanie błędu do konsoli dla celów debugowania
+    console.error('Błąd podczas przetwarzania pliku PDF:', error);
+    
+    // Zwracanie komunikatu o błędzie do klienta
     return NextResponse.json(
-      { error: 'Failed to process PDF file' },
+      { error: 'Nie udało się przetworzyć pliku PDF' },
       { status: 500 }
     );
   }

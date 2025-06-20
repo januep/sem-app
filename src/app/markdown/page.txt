@@ -1,3 +1,4 @@
+// Koncept, ogólnie porzucony, choć działał
 // File: app/markdown/page.tsx
 'use client';
 

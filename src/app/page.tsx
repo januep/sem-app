@@ -38,7 +38,7 @@ export default function Home() {
             className="text-5xl md:text-7xl font-bold text-white mb-6"
             style={{ transform: `translateY(${-scrollY * 0.2}px)` }}
           >
-            Twórz kursy <span className="text-yellow-300">szybciej</span> niż kiedykolwiek
+            Ucz się jeszcze <span className="text-yellow-300">wydajniej</span> niż kiedykolwiek
           </h1>
           <p
             className="text-xl md:text-2xl text-white/90 mb-10"

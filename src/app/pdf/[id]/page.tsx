@@ -1,10 +1,9 @@
 // src/app/pdf/[id]/page.tsx
 import PdfDetailClient from './PdfDetailClient'
 
-interface PageProps {
-  params: { id: string }
-}
-
-export default function PdfDetailPage({ params }: PageProps) {
-  return <PdfDetailClient pdfId={params.id} />
+export default async function PdfDetailPage(
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+  return <PdfDetailClient pdfId={id} />
 }

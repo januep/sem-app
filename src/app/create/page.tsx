@@ -47,10 +47,10 @@ export default function ChooseDataset() {
       <div className="max-w-4xl w-full mx-auto px-6 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-            Twórz kursy w mgnieniu oka
+            Twórz test w mgnieniu oka
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Wybierz sposób, w jaki chcesz utworzyć nowy kurs.
+            Ucz się lepiej i przyjemniej z wykorzystaniem najnowszych technologii.
           </p>
         </div>
 
@@ -70,14 +70,14 @@ export default function ChooseDataset() {
             </div>
             <div className="p-6">
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                Utworz potężny kurs, który zniszczy każdego.
+                Prześlij dokumnet PDF do interkatywnej nauki
               </h3>
               <p className="text-gray-600 mb-4">
-                Wybierz spośród naszej biblioteki wstępnie przetworzonych materiałów edukacyjnych przygotowanych do interaktywnej nauki.
+                Sztuczna Inteligencja przygotuje quizy do odpowiednich bloków wiedzy
               </p>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">
-                  Ponad 20 zbiorów danych dostępnych
+                  Ucz się i sprawdzaj czytanie ze zrozumieniem
                 </span>
                 <FiArrowRight className="w-6 h-6 text-indigo-600" />
               </div>
@@ -101,14 +101,14 @@ export default function ChooseDataset() {
             </div>
             <div className="p-6">
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                Prześlij dokument PDF
+                Wygeneruj pojedynczy test
               </h3>
               <p className="text-gray-600 mb-4">
-                Przekształć swoje materiały szkoleniowe w interaktywne moduły nauki dzięki AI.
+                Przekształć swój materiał w interaktywny test dzięki AI.
               </p>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">
-                  Przeciągnij i upuść lub przeglądaj
+                  Opcja jedynie dla małych plików.
                 </span>
                 <FiArrowRight className="w-6 h-6 text-indigo-600" />
               </div>
@@ -129,14 +129,14 @@ export default function ChooseDataset() {
             </div>
             <div className="p-6">
               <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                Utwórz przy użyciu podpowiedzi
+                Utwórz dowolny quiz na zapytanie
               </h3>
               <p className="text-gray-600 mb-4">
-                Wygeneruj kurs, korzystając z interaktywnej podpowiedzi, która poprowadzi Twój kreatywny proces.
+                Wygeneruj kurs, korzystając z okna dialogowego.
               </p>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">
-                  Zacznij od podstaw
+                  Przetestuj naszą aplikację
                 </span>
                 <FiArrowRight className="w-6 h-6 text-indigo-600" />
               </div>

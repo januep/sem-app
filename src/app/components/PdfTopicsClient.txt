@@ -1,4 +1,5 @@
 
+// zmienony na txt, bo juz nieuzywany.
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';

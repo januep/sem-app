@@ -32,7 +32,7 @@ export default function UploadPage() {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
     if (selectedFile && !selectedFile.name.toLowerCase().endsWith('.pdf')) {
-      setError('Please select a PDF file');
+      setError('Proszę wybrać plik PDF');
       setFile(null);
       return;
     }
@@ -58,7 +58,7 @@ export default function UploadPage() {
     setDragActive(false);
     const droppedFile = e.dataTransfer.files?.[0];
     if (droppedFile && !droppedFile.name.toLowerCase().endsWith('.pdf')) {
-      setError('Please drop a PDF file');
+      setError('Proszę upuścić plik PDF');
       return;
     }
     if (droppedFile) {
@@ -72,7 +72,7 @@ export default function UploadPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!file) {
-      setError('Please select a file to upload');
+      setError('Proszę wybrać plik do przesłania');
       return;
     }
 
@@ -92,13 +92,13 @@ export default function UploadPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to upload PDF');
+        throw new Error(errorData.error || 'Nie udało się przesłać pliku PDF');
       }
       const data = await response.json();
       setMetadata(data.metadata);
     } catch (err) {
       console.error('Upload error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to upload file');
+      setError(err instanceof Error ? err.message : 'Nie udało się przesłać pliku');
     } finally {
       setIsUploading(false);
     }
@@ -121,7 +121,7 @@ export default function UploadPage() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to upload to cloud');
+        throw new Error(errorData.error || 'Nie udało się przesłać do chmury');
       }
 
       // read both document_id and metadata
@@ -136,25 +136,25 @@ export default function UploadPage() {
       router.push(`/pdf/${data.document_id}`);
     } catch (err) {
       console.error('Cloud upload error:', err);
-      setError(err instanceof Error ? err.message : 'Cloud upload failed');
+      setError(err instanceof Error ? err.message : 'Przesyłanie do chmury nie powiodło się');
     } finally {
       setIsCloudUploading(false);
     }
   };
 
   const formatBytes = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    if (bytes === 0) return '0 Bajtów';
+    const sizes = ['Bajtów', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
   };
 
   const formatDate = (dateString: string | null): string => {
-    if (!dateString) return 'Not available';
+    if (!dateString) return 'Niedostępne';
     try {
-      return new Date(dateString).toLocaleString();
+      return new Date(dateString).toLocaleString('pl-PL');
     } catch {
-      return 'Invalid date';
+      return 'Nieprawidłowa data';
     }
   };
 
@@ -175,14 +175,14 @@ export default function UploadPage() {
       >
         <div className="p-8">
           <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-3xl font-bold text-gray-800 mb-2">
-            PDF Metadata Extractor
+            Wgraj dokument PDF
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { delay: 0.2 } }}
             className="text-gray-600 mb-8"
           >
-            Upload your PDF to analyze and extract its metadata
+            Prześlij swój plik PDF, aby przeanalizować i wyodrębnić jego metadane
           </motion.p>
 
           <form onSubmit={handleSubmit} className="mb-8">
@@ -217,9 +217,9 @@ export default function UploadPage() {
                     </svg>
                   </motion.div>
                   <p className="text-gray-700 font-medium mb-1">
-                    {dragActive ? 'Drop your PDF here' : 'Drag & drop your PDF here'}
+                    {dragActive ? 'Upuść swój plik PDF tutaj' : 'Przeciągnij i upuść swój plik PDF tutaj'}
                   </p>
-                  <p className="text-sm text-gray-500">or click to browse files</p>
+                  <p className="text-sm text-gray-500">lub kliknij, aby przeglądać pliki</p>
                   {file && (
                     <motion.div
                       initial={{ opacity: 0 }}
@@ -260,7 +260,7 @@ export default function UploadPage() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                     />
                   </svg>
-                  Processing PDF...
+                  Przetwarzanie pliku PDF...
                 </>
               ) : (
                 <>
@@ -271,7 +271,7 @@ export default function UploadPage() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  Extract PDF Metadata
+                  Wyodrębnij metadane PDF
                 </>
               )}
             </motion.button>
@@ -305,21 +305,21 @@ export default function UploadPage() {
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                       />
                     </svg>
-                    PDF Metadata
+                    Metadane PDF
                   </h2>
                 </div>
                 <div className="divide-y divide-gray-200">
                   {[
-                    { label: 'File Name', value: metadata.filename },
-                    { label: 'File Size', value: formatBytes(metadata.fileSize) },
-                    { label: 'Page Count', value: metadata.pageCount.toString() },
-                    { label: 'Word Count', value: metadata.wordCount.toLocaleString() },
-                    { label: 'Character Count', value: metadata.characterCount.toLocaleString() },
-                    { label: 'Title', value: metadata.title },
-                    { label: 'Author', value: metadata.author },
-                    { label: 'Subject', value: metadata.subject },
-                    { label: 'Creation Date', value: formatDate(metadata.creationDate) },
-                    { label: 'Modification Date', value: formatDate(metadata.modificationDate) }
+                    { label: 'Nazwa pliku', value: metadata.filename },
+                    { label: 'Rozmiar pliku', value: formatBytes(metadata.fileSize) },
+                    { label: 'Liczba stron', value: metadata.pageCount.toString() },
+                    { label: 'Liczba słów', value: metadata.wordCount.toLocaleString('pl-PL') },
+                    { label: 'Liczba znaków', value: metadata.characterCount.toLocaleString('pl-PL') },
+                    { label: 'Tytuł', value: metadata.title || 'Niedostępny' },
+                    { label: 'Autor', value: metadata.author || 'Niedostępny' },
+                    { label: 'Temat', value: metadata.subject || 'Niedostępny' },
+                    { label: 'Data utworzenia', value: formatDate(metadata.creationDate) },
+                    { label: 'Data modyfikacji', value: formatDate(metadata.modificationDate) }
                   ].map((item, index) => (
                     <motion.div key={index} variants={itemVariants} className="grid grid-cols-3 p-4 hover:bg-gray-50 transition-colors">
                       <span className="font-medium text-gray-700">{item.label}</span>
@@ -348,17 +348,17 @@ export default function UploadPage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                       />
                     </svg>
-                    Upload to Cloud...
+                    Przesyłanie do chmury...
                   </>
                 ) : (
-                  'Upload to Cloud'
+                  'Prześlij do chmury'
                 )}
               </motion.button>
 
               {documentId && (
                 <p className="mt-4 text-green-700 text-center">
                   PDF wgrany pomyślnie!<br />
-                  Document ID: <code>{documentId}</code>
+                  ID dokumentu: <code>{documentId}</code>
                 </p>
               )}
             </>
