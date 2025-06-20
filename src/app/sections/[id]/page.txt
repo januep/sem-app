@@ -1,0 +1,33 @@
+// app/sections/[id]/page.tsx
+// Porzucony feature
+import { createClient } from '@supabase/supabase-js'
+import MarkdownSectionClient from './MarkdownSectionClient'
+import { Database } from '@/app/lib/database.types'
+
+interface SectionPageProps {
+  params: { id: string }
+}
+
+export default async function SectionPage({ params }: SectionPageProps) {
+  const supabase = createClient<Database>(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
+  const { data: course, error } = await supabase
+    .from('courses')
+    .select('markdown, title')
+    .eq('id', params.id)
+    .single()
+
+  if (error || !course) {
+    return <p className="p-8 text-red-600">Failed to load course: {error?.message}</p>
+  }
+
+  return (
+    <MarkdownSectionClient
+      title={course.title}
+      markdown={course.markdown}
+    />
+  )
+}

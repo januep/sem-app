@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from "framer-motion";
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 export default function CreateQuizPrompt() {
   const [prompt, setPrompt] = useState('');
@@ -64,7 +64,7 @@ export default function CreateQuizPrompt() {
       variants={fadeIn}
       className="max-w-4xl mx-auto p-6 md:p-8"
     >
-      <Toaster position="top-center" toastOptions={{ duration: 4000 }} />
+      
       
       <motion.div 
         className="text-center mb-8"
