@@ -1,3 +1,4 @@
+// src/app/learn/[id]/chunk/[chunkId]/page.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';

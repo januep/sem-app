@@ -31,9 +31,9 @@ export async function POST(req: NextRequest) {
       const resp = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: [
-          { role: 'system', content: 'Jesteś pomocnym asystentem.' },
+          { role: 'system', content: 'You are a helpful assistant.' },
           { role: 'user', 
-            content: `Podsumuj poniższy tekst w 2–3 zdaniach:\n\n${page.text}` }
+            content: `Summarize the below text in 2-3 sentences, in the same language as provided:\n\n${page.text}` }
         ]
       })
       
