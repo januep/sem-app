@@ -6,21 +6,39 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const pdfId = params.id
-  const supabase = createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
+  try {
+    const pdfId = params.id
 
-  const { data: course, error } = await supabase
-    .from('courses')
-    .select('id')
-    .eq('pdf_document_id', pdfId)
-    .single()
+    // Validate that pdfId exists
+    if (!pdfId) {
+      return NextResponse.json({ error: 'PDF ID is required' }, { status: 400 })
+    }
 
-  if (error && error.code !== 'PGRST116') {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    // Check environment variables
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
+    }
+
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    )
+
+    const { data: course, error } = await supabase
+      .from('courses')
+      .select('id')
+      .eq('pdf_document_id', pdfId)
+      .single()
+
+    if (error && error.code !== 'PGRST116') {
+      console.error('Supabase error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    // jeżeli nie ma kursu, course będzie null
+    return NextResponse.json({ courseId: course?.id || null })
+  } catch (error) {
+    console.error('Unexpected error:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-  // jeżeli nie ma kursu, course będzie null
-  return NextResponse.json({ courseId: course?.id || null })
 }

@@ -32,9 +32,9 @@ export default function ProcessButton({ pdfId }: ProcessButtonProps) {
         setHidden(true);
         router.refresh();
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      toast.error(e.message || 'Unexpected error');
+      toast.error('Unexpected error');
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import ThemeToggle from "./components/ThemeToggle";
 import {
   Home,
@@ -29,7 +30,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo & Name */}
           <div className="flex items-center space-x-3">
-            <img
+            <Image
               src="/PhButterflyBold.svg"
               alt="Papil.io Logo"
               width={32}
@@ -96,6 +97,7 @@ const Header = () => {
         </nav>
       )}
     </header>
-)};
+  );
+};
 
 export default Header;
