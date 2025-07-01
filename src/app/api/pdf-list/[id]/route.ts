@@ -1,6 +1,6 @@
 // src/app/api/pdf-list/[id]/route.ts
-import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAnonKey } from '@/app/lib/supabaseClient'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   _req: NextRequest,
