@@ -29,9 +29,9 @@ export default function GenerateChunksButton({ pdfId }: GenerateChunksButtonProp
         toast.success(`Created ${json.count} chunks`);
         router.refresh();
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error('generate-chunks error:', e);
-      toast.error(e.message || 'Unexpected error');
+      toast.error( 'Unexpected error');
     } finally {
       setLoading(false);
     }

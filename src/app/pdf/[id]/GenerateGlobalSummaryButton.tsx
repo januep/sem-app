@@ -31,9 +31,9 @@ export default function GenerateGlobalSummaryButton({
         toast.success('Global summary created');
         router.refresh();
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      toast.error(e.message || 'Unexpected error');
+      toast.error('Unexpected error');
     } finally {
       setLoading(false);
     }

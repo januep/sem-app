@@ -33,10 +33,10 @@ export async function GET() {
 
     return NextResponse.json(pdfs);
 
-  } catch (e: any) {
-    console.error('API route error:', e.message);
+  } catch (e: unknown) {
+    console.error('API route error:', e);
     return NextResponse.json(
-      { error: 'An unexpected error occurred on the server.', details: e.message },
+      { error: 'An unexpected error occurred on the server.', e },
       { status: 500 }
     );
   }

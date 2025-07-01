@@ -26,9 +26,9 @@ export default function GenerateSummariesButton({ pdfId }: GenerateSummariesButt
       if (!res.ok) throw new Error(json.error || 'Generation failed');
       toast.success('Summaries generated');
       router.refresh();
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      toast.error(e.message || 'Unexpected error');
+      toast.error('Unexpected error');
     } finally {
       setLoading(false);
     }

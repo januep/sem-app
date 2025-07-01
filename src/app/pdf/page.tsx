@@ -34,9 +34,9 @@ export default function PdfListClient() {
         }
         const data: PdfDocument[] = await response.json();
         setPdfs(data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Fetch error:", err);
-        setError(err.message || 'An unknown error occurred while fetching PDFs.');
+        setError('An unknown error occurred while fetching PDFs.');
       } finally {
         setIsLoading(false);
       }

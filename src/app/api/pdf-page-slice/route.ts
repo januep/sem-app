@@ -1,3 +1,4 @@
+// api/pdf-page-slice
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/app/lib/supabaseAdmin'
 import { PDFDocument } from 'pdf-lib'
@@ -5,11 +6,12 @@ import pdfParse from 'pdf-parse'
 
 export async function POST(req: NextRequest) {
   try {
+    // Pobranie ID dokumentu PDF z żądania
     const { pdfId } = await req.json()
 
-    console.log(`Starting text extraction for PDF ID: ${pdfId}`)
+    console.log(`Rozpoczynanie wyodrębniania tekstu dla PDF ID: ${pdfId}`)
 
-    // 1. Pobierz ścieżkę do PDF-a
+    // 1. Pobranie ścieżki do pliku PDF z bazy danych
     const { data: doc, error: docErr } = await supabaseAdmin
       .from('pdf_documents')
       .select('path, filename')
@@ -20,7 +22,7 @@ export async function POST(req: NextRequest) {
       throw docErr || new Error('PDF not found')
     }
 
-    // 2. Pobierz plik z bucketu `pdfs`
+    // 2. Pobranie pliku z bucketu 'pdfs' w Supabase Storage
     const { data: file, error: downloadErr } = await supabaseAdmin
       .storage
       .from('pdfs')
@@ -30,26 +32,26 @@ export async function POST(req: NextRequest) {
       throw downloadErr || new Error('Could not download PDF')
     }
 
-    // 3. Przekonwertuj na Buffer
+    // 3. Konwersja pliku na Buffer do dalszego przetwarzania
     const buffer = Buffer.from(await file.arrayBuffer())
     
-    // 4. Użyj pdf-lib do precyzyjnego odczytu stron
+    // 4. Użycie pdf-lib do precyzyjnego odczytu liczby stron
     const pdfDoc = await PDFDocument.load(buffer)
     const totalPages = pdfDoc.getPageCount()
     
-    console.log(`PDF has ${totalPages} pages`)
+    console.log(`PDF zawiera ${totalPages} stron`)
 
-    // 5. Przetwórz każdą stronę osobno
+    // 5. Przetwarzanie każdej strony osobno w pętli
     let successfulPages = 0
     
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
       try {
-        console.log(`Processing page ${pageNum}/${totalPages}`)
+        console.log(`Przetwarzanie strony ${pageNum}/${totalPages}`)
 
-        // Wyciągnij tekst z pojedynczej strony
-        const pageText = await extractSinglePageText(pdfDoc, pageNum - 1) // pdf-lib używa indeksów od 0
+        // Wyodrębnienie tekstu z pojedynczej strony (pdf-lib używa indeksów od 0)
+        const pageText = await extractSinglePageText(pdfDoc, pageNum - 1)
 
-        // Wstaw stronę do bazy danych
+        // Wstawienie danych strony do tabeli pdf_pages w bazie danych
         const { error: pageErr } = await supabaseAdmin
           .from('pdf_pages')
           .insert({
@@ -59,30 +61,31 @@ export async function POST(req: NextRequest) {
           })
 
         if (pageErr) {
-          console.error(`Error inserting page ${pageNum}:`, pageErr)
+          console.error(`Błąd podczas wstawiania strony ${pageNum}:`, pageErr)
         } else {
           successfulPages++
-          console.log(`Successfully processed page ${pageNum}`)
+          console.log(`Pomyślnie przetworzono stronę ${pageNum}`)
         }
 
       } catch (pageErr) {
-        console.error(`Error processing page ${pageNum}:`, pageErr)
-        continue
+        console.error(`Błąd podczas przetwarzania strony ${pageNum}:`, pageErr)
+        continue // Kontynuuj z następną stroną mimo błędu
       }
     }
 
-    // 6. Oznacz PDF jako przetworzony
+    // 6. Oznaczenie dokumentu PDF jako przetworzony w bazie danych
     const { error: updateErr } = await supabaseAdmin
       .from('pdf_documents')
       .update({ processed: true })
       .eq('id', pdfId)
 
     if (updateErr) {
-      console.error('Error marking PDF as processed:', updateErr)
+      console.error('Błąd podczas oznaczania PDF jako przetworzony:', updateErr)
     }
 
-    console.log(`Successfully processed ${successfulPages}/${totalPages} pages`)
+    console.log(`Pomyślnie przetworzono ${successfulPages}/${totalPages} stron`)
 
+    // Zwrócenie podsumowania rezultatów przetwarzania
     return NextResponse.json({ 
       success: true, 
       totalPages: totalPages,
@@ -90,34 +93,35 @@ export async function POST(req: NextRequest) {
       message: `Successfully processed ${successfulPages} out of ${totalPages} pages`
     })
 
-  } catch (err: any) {
-    console.error('pdf-page-slice error:', err)
+  } catch (err: unknown) {
+    // Obsługa nieoczekiwanych błędów
+    console.error('Błąd pdf-page-slice:', err)
     return NextResponse.json(
-      { error: err.message || 'Server error' },
+      { error: 'Server error' },
       { status: 500 }
     )
   }
 }
 
-// Helper function to extract text from a single page using pdf-lib
+// Funkcja pomocnicza do wyodrębniania tekstu z pojedynczej strony przy użyciu pdf-lib
 async function extractSinglePageText(pdfDoc: PDFDocument, pageIndex: number): Promise<string> {
   try {
-    // Utwórz nowy dokument PDF z pojedynczą stroną
+    // Utworzenie nowego dokumentu PDF zawierającego tylko jedną stronę
     const singlePageDoc = await PDFDocument.create()
     const [copiedPage] = await singlePageDoc.copyPages(pdfDoc, [pageIndex])
     singlePageDoc.addPage(copiedPage)
     
-    // Serializuj do buffer
+    // Serializacja dokumentu do postaci binarnej
     const pdfBytes = await singlePageDoc.save()
     const buffer = Buffer.from(pdfBytes)
     
-    // Użyj pdf-parse do wyciągnięcia tekstu z pojedynczej strony
+    // Użycie pdf-parse do wyodrębnienia tekstu z pojedynczej strony
     const data = await pdfParse(buffer)
     
     return data.text?.trim() || ''
     
   } catch (err) {
-    console.error(`Error extracting text from page ${pageIndex + 1}:`, err)
-    return ''
+    console.error(`Błąd podczas wyodrębniania tekstu ze strony ${pageIndex + 1}:`, err)
+    return '' // Zwróć pusty string w przypadku błędu
   }
 }
