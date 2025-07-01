@@ -62,9 +62,9 @@ export default async function CoursesPage() {
     <main className="min-h-screen py-16 px-6">
    <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-800 mb-3">Twoje kursy</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-3">Twoje quizy</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Wybierz kurs i przetestuj jego działanie
+            Wybierz quiz i przetestuj jego działanie
           </p>
         </div>
 

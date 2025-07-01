@@ -2,6 +2,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Book, Code, Sparkles, BarChart, GraduationCap, Leaf, Mountain } from 'lucide-react';
 
 interface FloatingElementPosition {
@@ -258,7 +259,13 @@ export default function AboutPage() {
                             repeatType: "mirror"
                           }}
                         >
-                          <img src="/PhButterflyBold.svg" alt="Motyl" className="w-10 h-10" />
+                          <Image 
+                            src="/PhButterflyBold.svg" 
+                            alt="Motyl" 
+                            width={40} 
+                            height={40}
+                            className="w-10 h-10" 
+                          />
                         </motion.div>
                       </span>
                     </div>
@@ -346,7 +353,13 @@ export default function AboutPage() {
                               }}
                               className="relative inline-block"
                             >
-                              <img src="/PhButterflyBold.svg" alt="Motyl" className="w-16 h-16" />
+                              <Image 
+                                src="/PhButterflyBold.svg" 
+                                alt="Motyl" 
+                                width={64} 
+                                height={64}
+                                className="w-16 h-16" 
+                              />
                               <div className="absolute -top-2 -right-2">
                                 <span className="text-3xl">✨</span>
                               </div>
